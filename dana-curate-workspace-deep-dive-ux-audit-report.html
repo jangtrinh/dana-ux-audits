@@ -71,9 +71,10 @@ pre code { background:none; border:none; padding:0; }
 .audit-nav a::before { content:"\2022 "; color:#52525b; padding-right:6px; }
 .audit-nav a:first-child::before { content:"\1F4D1 "; padding-right:6px; }
 
-.download-md { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; margin-top:8px; background:#f4f4f5; border:1px solid #e7e5e4; border-radius:6px; font-size:12px; color:#2563eb; text-decoration:none; }
-.download-md:hover { background:#e7e5e4; }
-.download-md::before { content:"\2B07"; font-size:11px; }
+
+.download-md { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; margin:0 0 20px 0; background:#18181b; color:#fff !important; border:none; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none !important; transition:background .12s; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+.download-md:hover { background:#27272a; color:#fff !important; text-decoration:none !important; }
+.download-md::before { content:"\2B07\FE0F"; font-size:14px; }
 </style>
 </head>
 <body>
@@ -82,6 +83,8 @@ pre code { background:none; border:none; padding:0; }
 
 <h1>Dana - Curate Workspace</h1>
 <p class="subtitle">Deep-dive UX audit - v0.2.114 - UX scope only</p>
+<a class="download-md" href="dana-curate-workspace-deep-dive-ux-audit-report.md" download>Download markdown</a>
+
 
 <section class="meta">
 <dl>
@@ -92,9 +95,6 @@ pre code { background:none; border:none; padding:0; }
 <dt>Confidence</dt><dd><span class="sev medium-conf">Medium</span> - one auditor, reproducible single-observation grade. Findings supported by verbatim Dana output and screenshots.</dd>
 </dl>
 </section>
-<p><a class="download-md" href="md/dana-curate-workspace-deep-dive-ux-audit-report.md" download>Download markdown source</a></p>
-
-
 <h2><span class="h2-eyebrow">Summary</span>TL;DR</h2>
 
 <div class="approach"><div><span class="label">Approach:</span> Distilled ten sub-scenario findings into the wins and bugs that most affect the curate-then-train loop.</div><div><span class="label">Why:</span> The Curate workspace is where the user invests the most time. Stakeholders need to know what makes that investment pay off and what makes users walk away.</div></div>

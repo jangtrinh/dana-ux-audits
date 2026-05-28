@@ -529,9 +529,10 @@ pre code {
 .audit-nav a::before { content:"\2022 "; color:#52525b; padding-right:6px; }
 .audit-nav a:first-child::before { content:"\1F4D1 "; padding-right:6px; }
 
-.download-md { display:inline-flex; align-items:center; gap:6px; padding:4px 10px; margin-top:8px; background:#f4f4f5; border:1px solid #e7e5e4; border-radius:6px; font-size:12px; color:#2563eb; text-decoration:none; }
-.download-md:hover { background:#e7e5e4; }
-.download-md::before { content:"\2B07"; font-size:11px; }
+
+.download-md { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; margin:0 0 20px 0; background:#18181b; color:#fff !important; border:none; border-radius:8px; font-size:13px; font-weight:600; text-decoration:none !important; transition:background .12s; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+.download-md:hover { background:#27272a; color:#fff !important; text-decoration:none !important; }
+.download-md::before { content:"\2B07\FE0F"; font-size:14px; }
 </style>
 
 <style>
@@ -595,6 +596,8 @@ pre code {
 <main>
 <h1>Dana Onboarding UX Audit</h1>
 <p class="subtitle">Jobs-to-be-Done analysis &middot; v0.2.114 &middot; UX scope only</p>
+<a class="download-md" href="dana-onboarding-v2-ux-audit-report.md" download>Download markdown</a>
+
 
 <section id="meta" class="meta">
   <dl>
@@ -605,9 +608,6 @@ pre code {
     <dt>Confidence</dt><dd><span class="sev medium-conf">Medium</span> - one auditor played all 4 personas. Outside-user unscripted run not done; would raise confidence to High.</dd>
   </dl>
 </section>
-<p><a class="download-md" href="md/ux-audit-260527-1511-dana-onboarding-v2-cross-persona-rollup-report.md" download>Download markdown source</a></p>
-
-
 <section id="tldr">
 <h2><span class="h2-eyebrow">Summary</span>TL;DR - JTBD scorecard</h2>
 
