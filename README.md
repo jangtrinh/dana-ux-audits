@@ -13,8 +13,7 @@ Each audit report is paired: an HTML page for reading in browser, and a Markdown
 - `dana-onboarding-v2-ux-audit-report.html` - cross-persona Jobs-to-be-Done audit (4 personas)
 - `dana-create-agent-flow-deep-dive-ux-audit-report.html` - deep dive on the create-agent modal (9 sub-scenarios)
 - `dana-curate-workspace-deep-dive-ux-audit-report.html` - deep dive on Curate workspace (10 sub-scenarios)
-- `dana-initial-onboarding-walkthrough.html` - background: original heuristic walkthrough
-- `dana-plan-benchmark-assessment.html` - background: methodology benchmark vs Nielsen Norman / Maze / UserTesting
+- `dana-plan-benchmark-assessment.html` - methodology benchmark vs Nielsen Norman / Maze / UserTesting
 
 ## Markdown sources (AI-friendly)
 
