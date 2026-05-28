@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dana - Curate Workspace Deep Dive UX Audit</title>
 <style>
 :root { --bg:#f7f7f5; --surface:#fff; --border:#e7e5e4; --text:#18181b; --text-muted:#71717a; --text-soft:#a1a1aa; --accent:#18181b; --critical:#dc2626; --major:#ea580c; --moderate:#ca8a04; --minor:#6b7280; --positive:#16a34a; --neutral:#2563eb; --code-bg:#f4f4f5; --shadow-sm:0 1px 2px rgba(0,0,0,.04); --shadow:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04); }
@@ -74,17 +75,62 @@ pre code { background:none; border:none; padding:0; }
 .audit-nav a.active { color:#fff; background:rgba(255,255,255,.12); font-weight:600; }
 .audit-nav a::before { content:"\2022 "; color:#52525b; padding-right:6px; }
 .audit-nav a:first-child::before { content:"\1F4D1 "; padding-right:6px; }
+
+.layout { display:grid; grid-template-columns:260px 1fr; max-width:1400px; margin:0 auto; min-height:100vh; }
+nav.toc { background:#fff; border-right:1px solid #e7e5e4; padding:32px 24px; position:sticky; top:0; height:100vh; overflow-y:auto; font-size:13px; }
+nav.toc h2 { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:#a1a1aa; margin:28px 0 10px; font-weight:700; border:none; padding:0; }
+nav.toc h2:first-child { margin-top:0; }
+nav.toc a { display:block; padding:6px 8px; color:#18181b; text-decoration:none; border-radius:6px; margin:2px 0; }
+nav.toc a:hover { background:#f4f4f5; color:#2563eb; }
+nav.toc .jtbd-link { font-weight:600; }
+nav.toc .step-link { padding-left:24px; font-size:12px; color:#71717a; }
+nav.toc .sev-row { display:flex; align-items:center; gap:6px; font-size:11px; margin:4px 0; color:#71717a; }
+nav.toc .sev-row .sev { display:inline-flex; align-items:center; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+nav.toc .sev-row .sev.critical { background:#dc2626; color:#fff; }
+nav.toc .sev-row .sev.major { background:#ea580c; color:#fff; }
+nav.toc .sev-row .sev.moderate { background:#ca8a04; color:#fff; }
+nav.toc .sev-row .sev.minor { background:#6b7280; color:#fff; }
+nav.toc .sev-row .sev.win { background:#16a34a; color:#fff; }
+nav.toc .sev-row .sev.high-conf { background:#18181b; color:#fff; }
+nav.toc .sev-row .sev.medium-conf { background:#71717a; color:#fff; }
+main { padding:56px 72px; max-width:1040px; width:100%; }
+@media (max-width:900px) { .layout { grid-template-columns:1fr; } nav.toc { position:static; height:auto; border-right:none; border-bottom:1px solid #e7e5e4; } main { padding:32px 24px; } }
 </style>
 </head>
 <body>
-<header class="top-bar"><div class="top-bar-inner"><div class="audit-nav"><a href="index.html">All Dana audits</a><a href="dana-ux-audits-methodology.html">How we audit</a><a href="dana-onboarding-v2-ux-audit-report.html">Cross-persona JTBD</a><a href="dana-create-agent-flow-deep-dive-ux-audit-report.html">Create-agent deep dive</a><a href="dana-curate-workspace-deep-dive-ux-audit-report.html" class="active">Curate workspace deep dive</a><a href="dana-plan-benchmark-assessment.html">Plan benchmark</a></div></div></header>
-<main>
+<header class="top-bar"><div class="top-bar-inner"><div class="audit-nav"><a href="index.html">All Dana audits</a><a href="dana-ux-audits-methodology.html">How we audit</a><a href="dana-onboarding-v2-ux-audit-report.html">Cross-persona JTBD</a><a href="dana-create-agent-flow-deep-dive-ux-audit-report.html">Create-agent deep dive</a><a class="active" href="dana-curate-workspace-deep-dive-ux-audit-report.html">Curate workspace deep dive</a><a href="dana-plan-benchmark-assessment.html">Plan benchmark</a></div></div></header>
+<div class="layout">
+<nav class="toc">
+<h2>Sections</h2>
+<a href="#tldr" class="jtbd-link">TL;DR</a>
+<a href="#top7" class="jtbd-link">Top 7 fixes</a>
+<a href="#honesty" class="jtbd-link">Confidence & caveats</a>
+<a href="#s1" class="step-link">Layout & first-impression on landing</a>
+<a href="#s2" class="step-link">Dana's first turn structure</a>
+<a href="#s3" class="step-link">Multi-turn conversation flow</a>
+<a href="#s4" class="step-link">File approval & write workflow</a>
+<a href="#s5" class="step-link">File tree exploration</a>
+<a href="#s6" class="step-link">Edit mode round-trip</a>
+<a href="#s7" class="step-link">Working Panel (Sources / Library / Uploaded)</a>
+<a href="#s8" class="step-link">Activity reasoning UX</a>
+<a href="#s9" class="step-link">Use Agent handoff from Curate</a>
+<a href="#s10" class="step-link">Long execution + edge observations</a>
 
+<h2>Severity</h2>
+<div class="sev-row"><span class="sev critical">Critical</span> Blocker</div>
+<div class="sev-row"><span class="sev major">Major</span> Activation loss</div>
+<div class="sev-row"><span class="sev moderate">Moderate</span> Friction</div>
+<div class="sev-row"><span class="sev minor">Minor</span> Polish</div>
+<div class="sev-row"><span class="sev win">Win</span> Positive</div>
+<h2>Confidence</h2>
+<div class="sev-row"><span class="sev high-conf">High</span> Cross-source</div>
+<div class="sev-row"><span class="sev medium-conf">Medium</span> Single observation</div>
+
+</nav>
+<main>
 <h1>Dana - Curate Workspace</h1>
 <p class="subtitle">Deep-dive UX audit - v0.2.114 - UX scope only</p>
-<a class="download-md" href="dana-curate-workspace-deep-dive-ux-audit-report.md" download>Download markdown</a>
-
-
+<a class="download-md" download="" href="dana-curate-workspace-deep-dive-ux-audit-report.md">Download markdown</a>
 <section class="meta">
 <dl>
 <dt>Date</dt><dd>2026-05-28 09:06 - 10:00 +07:00, Asia/Saigon</dd>
@@ -94,12 +140,9 @@ pre code { background:none; border:none; padding:0; }
 <dt>Confidence</dt><dd><span class="sev medium-conf">Medium</span> - one auditor, reproducible single-observation grade. Findings supported by verbatim Dana output and screenshots.</dd>
 </dl>
 </section>
-<h2><span class="h2-eyebrow">Summary</span>TL;DR</h2>
-
+<h2 id="tldr">TL;DR</h2>
 <div class="approach"><div><span class="label">Approach:</span> Distilled ten sub-scenario findings into the wins and bugs that most affect the curate-then-train loop.</div><div><span class="label">Why:</span> The Curate workspace is where the user invests the most time. Stakeholders need to know what makes that investment pay off and what makes users walk away.</div></div>
-
 <p>Curate is Dana's strongest surface in conceptual design and Dana's weakest surface in execution feedback. Dana's domain awareness, approval workflow, and write transparency are all best-in-class. But the gap between user approval and visible file output is a multi-minute silence with no granular progress, and the file tree does not auto-refresh when Dana finishes - both leave the user wondering if anything is happening.</p>
-
 <div class="tldr-grid">
 <div class="tldr-card wins">
 <h4>UX wins</h4>
@@ -124,14 +167,11 @@ pre code { background:none; border:none; padding:0; }
 </ul>
 </div>
 </div>
-
 <!-- =================== SCENARIO 1 =================== -->
 <section class="scenario" id="s1">
-<div class="scenario-header"><span class="scenario-number">1</span><h3>Layout & first-impression on landing</h3></div>
+<div class="scenario-header"><span class="scenario-number">1</span><h3>Layout &amp; first-impression on landing</h3></div>
 <p class="scenario-intro">3-column layout with pre-rendered surfaces during load. File tree (left), chat (center), Working Panel (right), top bar with agent identity + Use-Agent CTA + dark mode + avatar.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Created a test agent and observed the first paint of the Curate workspace before Dana started streaming.</div><div><span class="label">Why:</span> First impressions of a long-form workspace shape user willingness to invest the next 10-30 minutes. Pre-rendered scaffolding signals "this is ready" even before content loads.</div></div>
-
 <table>
 <thead><tr><th>Surface element</th><th>What's there</th><th>Verdict</th></tr></thead>
 <tbody>
@@ -143,29 +183,23 @@ pre code { background:none; border:none; padding:0; }
 <tr><td>Chat input</td><td>"Type message, @ to tag files" placeholder + plus icon (attach?) + send button</td><td><span class="sev minor">Minor</span> @ syntax discoverability</td></tr>
 </tbody>
 </table>
-
 <div class="finding">
 <div class="finding-header"><span class="sev minor">Minor</span><span class="sev medium-conf">Medium</span><div class="finding-title">Green status dot next to Dana's avatar - meaning unclear</div></div>
 <p>Dana isn't an integration that goes online or offline. The green dot reads "available" but conveys no actionable signal.</p>
 <div class="recommendation">Either drop the dot, or use color to convey state that actually matters (busy / idle / error).</div>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev minor">Minor</span><span class="sev medium-conf">Medium</span><div class="finding-title">@ syntax in chat input is undiscoverable</div></div>
 <p>Placeholder says "Type message, @ to tag files". @ syntax to reference files is a power feature, but no autocomplete preview or tooltip explains what files can be tagged.</p>
 <div class="recommendation">Show available tags in an inline autocomplete dropdown when user types @.</div>
 </div>
 </section>
-
 <!-- =================== SCENARIO 2 =================== -->
 <section class="scenario" id="s2">
 <div class="scenario-header"><span class="scenario-number">2</span><h3>Dana's first turn structure</h3></div>
 <p class="scenario-intro">Activity reasoning block exposed by default, followed by 4 categories of clarifying questions, then a preview of the roadmap coming next, with a closing call-to-action.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Read Dana's first turn verbatim and counted the question density. Compared the question vocabulary to the role text to verify domain adaptation.</div><div><span class="label">Why:</span> Dana's first turn sets the curation contract. If it's domain-aware, the user trusts the loop. If it asks 12 generic questions, the user walks away. Question density is also a known friction source from prior audits.</div></div>
-
 <p>For the test agent (a "reliability engineer interpreting vibration signatures on rotating equipment"), Dana produced these questions:</p>
-
 <pre><code>1. Users &amp; Use Cases
    - Who will interact with this agent? (Level 1 maintenance technicians,
      Level 2 vibration analysts, reliability engineers, plant managers?)
@@ -187,38 +221,30 @@ pre code { background:none; border:none; padding:0; }
    - Do you have existing materials I should incorporate?
    - Should I research public standards? (ISO 10816 vibration severity,
      ISO 13373 condition monitoring, Mobius Institute resources)</code></pre>
-
 <div class="callout success">
 <div class="title">Domain awareness verified</div>
 References to ISO 10816, ISO 13373, and Mobius Institute are real vibration-analysis standards - Dana didn't fabricate them, she pulled from her general knowledge of the domain inferred from the role text. This is the strongest perceived-intelligence moment in the entire curate flow.
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Clarifying questions adapt to inferred domain with real-world vocabulary</div></div>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev moderate">Moderate</span><span class="sev high-conf">High</span><div class="finding-title">7+ freeform questions on the first turn - high cognitive load</div></div>
 <p>The Depth of Knowledge category is presented as Basic / Intermediate / Advanced - a categorical choice that would be a perfect chip. Same for Industries (power gen / oil &amp; gas / chemical / HVAC).</p>
 <div class="recommendation">Replace categorical questions with multi-select chips (Depth, Industry, Equipment types). Keep freeform only where the answer is genuinely open-ended (sources, scenarios).</div>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev minor">Minor</span><span class="sev medium-conf">Medium</span><div class="finding-title">Activity reasoning block expanded by default</div></div>
 <p>Block reads in third person ("The user wants me to curate..."). Power users may find useful; SME persona may find confusing or noisy.</p>
 <div class="recommendation">Collapse Activity blocks by default with a subtle "Dana's reasoning" expandable.</div>
 </div>
 </section>
-
 <!-- =================== SCENARIO 3 =================== -->
 <section class="scenario" id="s3">
 <div class="scenario-header"><span class="scenario-number">3</span><h3>Multi-turn conversation flow</h3></div>
 <p class="scenario-intro">User reply -&gt; Dana synthesizes a structured roadmap with code blocks, tables, and phased phases -&gt; closes with specific actionable questions and an "Awaiting your go-ahead" pause.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Replied to Dana's first turn with a compressed paragraph covering all four categories. Observed the structure, depth, and approval pause of her response.</div><div><span class="label">Why:</span> Dana's synthesis quality is the main perceived-value moment. The shape of her response - whether she over-asks, under-commits, or proposes a real plan - decides whether the user continues curating.</div></div>
-
 <p>Submitted user reply: <em>"Maintenance technicians (mostly Level 1) and reliability engineers. Coverage: pumps and motors in oil and gas. Intermediate depth, using ISO 10816 thresholds. We have manuals and incident reports."</em></p>
-
 <p>Dana's response included:</p>
 <ul>
 <li><strong>Activity reasoning block</strong> recapping the user's inputs as a 4-line structured summary, then announcing intent: "Now I should propose a roadmap and wait for their approval before writing files."</li>
@@ -229,30 +255,24 @@ References to ISO 10816, ISO 13373, and Mobius Institute are real vibration-anal
 <li><strong>My Questions Before We Begin</strong> with 4 SPECIFIC actionable questions (not yes/no).</li>
 <li><strong>"Awaiting your go-ahead."</strong></li>
 </ul>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Roadmap synthesis quality is exceptional</div></div>
 <p>One brief reply produced a complete, coherent, domain-correct plan with file-tree preview, prioritized sources, and phased delivery. This is the strongest "Dana earns the user's trust" moment.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Code blocks have copy + download affordances inline</div></div>
 <p>The ontology tree code block and any other generated code chunks each have icons in the top-right for copy and download. Lets the user grab pieces independently.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Markdown render quality (tables, code, nested lists, headings)</div></div>
 <p>Tables render with proper headers and zebra stripes. Code blocks use monospace + scrollable horizontal overflow. Nested lists indent correctly.</p>
 </div>
 </section>
-
 <!-- =================== SCENARIO 4 =================== -->
 <section class="scenario" id="s4">
 <div class="scenario-header"><span class="scenario-number">4</span><h3>File approval &amp; write workflow</h3></div>
 <p class="scenario-intro">Dana proposes structure -&gt; user approves in chat -&gt; Dana enters execution mode -&gt; (long silent wait) -&gt; Dana posts "Files Created" table with mutations + external knowledge sources referenced.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Approved Phase 1 with a specific reply ("Yes, proceed with Phase 1. Use public ISO 10816 summary. Focus on centrifugal pumps and AC induction motors."). Observed the gap between approval and visible file output.</div><div><span class="label">Why:</span> The approval pattern is Dana's safety contract - users grant explicit consent before mutation. But the latency between approval and visible output is where users either lose patience or build trust. This is the critical UX gap.</div></div>
-
 <div class="callout alert">
 <div class="title">Critical: 5-minute silent execution</div>
 <p>Time from approval ("Yes, proceed with Phase 1" at 09:50 AM) to file output ("Phase 1 ontology is complete" at 09:55 AM) was approximately 5 minutes. During this window, the chat showed only:</p>
@@ -265,13 +285,11 @@ References to ISO 10816, ISO 13373, and Mobius Institute are real vibration-anal
 </ul>
 <p>No granular progress: no "Creating ontology/ONTOLOGY.md...", no "Writing rules/severity_classification.yaml...", no percentage, no countdown.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev critical">Critical</span><span class="sev high-conf">High</span><div class="finding-title">Tool execution silent for minutes - no granular progress signal</div></div>
 <p>For a 5-minute operation, the user cannot tell if Dana is working, hung, or about to error. The spinner is binary (on/off); there's no intermediate state.</p>
 <div class="recommendation">Stream inline tool-use cards as Dana executes: "Reading ISO 10816 summary...", "Writing ontology/ONTOLOGY.md (1024 bytes)", "Writing rules/severity_classification.yaml". Make the file tree update in real time as files are created.</div>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">"Files Created" table is gold-standard write transparency</div></div>
 <p>After execution, Dana posted:</p>
@@ -286,64 +304,50 @@ References to ISO 10816, ISO 13373, and Mobius Institute are real vibration-anal
 </table>
 <p>Plus a "Knowledge Sources Referenced" section with two external citations (ISO 10816 Vibration Severity Chart, Fluke: Diagnosing Imbalance/Misalignment/Looseness/Bearing Wear). This is best-in-class write transparency.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Auto-proposes "Ready for Phase 2?" after Phase 1 completion</div></div>
 <p>Dana doesn't stall after writing files. She immediately proposes Phase 2 extensions and alternative paths ("if you have manuals to ingest, I can..."). Natural conversation continuation.</p>
 </div>
 </section>
-
 <!-- =================== SCENARIO 5 =================== -->
 <section class="scenario" id="s5">
 <div class="scenario-header"><span class="scenario-number">5</span><h3>File tree exploration</h3></div>
 <p class="scenario-intro">Folder tree on the left lists agents, ontology, and curate_outputs. Clicking a file opens a Preview pane. Refresh button and search field at the top.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Clicked into AGENT.md to inspect Preview pane structure. Manually triggered tree refresh after Dana wrote files. Tested folder expand / collapse.</div><div><span class="label">Why:</span> The tree is Dana's commitment to "you can see everything." If the tree doesn't reflect actual state, the commitment breaks.</div></div>
-
 <div class="callout alert">
 <div class="title">Tree does NOT auto-refresh after Dana writes files</div>
 <p>After Dana completed her file creation and posted the "Files Created" table, the file tree continued to show only the pre-existing entries (agents/curateauditbot/AGENT.md, ontology/ONTOLOGY.md, curate_outputs/). The new files (rules/severity_classification.yaml, rules/fault_patterns.yaml, skills/analyze_vibration.md) were NOT visible until I manually clicked the refresh button next to the ontology pane header.</p>
 <p>This breaks Dana's transparency contract: she says "Phase 1 ontology is complete. Here's what was created", but the tree disagrees until the user refreshes.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev major">Major</span><span class="sev high-conf">High</span><div class="finding-title">File tree does not auto-refresh when Dana writes files</div></div>
 <div class="recommendation">Subscribe the tree to file-mutation events (or poll every 2s during streaming). The tree should update before or simultaneously with the "Files Created" message, not minutes later when the user happens to click refresh.</div>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Manual refresh gives a clear toast confirmation</div></div>
 <p>Clicking the refresh icon shows a green "Refreshed" toast at the bottom. Action acknowledged.</p>
 </div>
 </section>
-
 <!-- =================== SCENARIO 6 =================== -->
 <section class="scenario" id="s6">
 <div class="scenario-header"><span class="scenario-number">6</span><h3>Edit mode round-trip</h3></div>
 <p class="scenario-intro">Click a file -&gt; Preview pane opens -&gt; click Edit -&gt; split editor (Code/Rich Text) with keyboard shortcuts and Save/Cancel buttons. Esc cancels cleanly.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Opened AGENT.md in Preview, toggled Edit mode, observed the split editor, then pressed Esc to verify cancellation. Did not save an actual edit to avoid corrupting the test agent's identity.</div><div><span class="label">Why:</span> The edit affordance is what makes the file tree a power-user feature rather than a leak. If editing doesn't round-trip cleanly, the surface becomes a trap.</div></div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Edit mode is a polished split editor with explicit shortcuts</div></div>
 <p>Header bar shows "52 lines · 2 pages | Preview | Edit | download | fullscreen | close X". Sub-header in Edit mode shows "Code | Rich Text" toggle and "<span class="kbd">Cmd+S</span> to save, <span class="kbd">Esc</span> to cancel" hint. Save and Cancel buttons accessible top-right of editor pane.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Esc cleanly cancels edit mode</div></div>
 <p>Press Esc while in Edit mode returns to Preview view without prompting (no edits were made, so no discard-confirm needed). This is one of the few places in Dana where Esc actually works as expected.</p>
 </div>
-
 <p>Note: a full edit -&gt; save -&gt; verify-persistence round-trip was not exercised in this audit to avoid mutating the test agent's identity mid-session. Recommend a follow-up that types a deliberate marker, saves, refreshes, and verifies persistence + propagation to runtime.</p>
 </section>
-
 <!-- =================== SCENARIO 7 =================== -->
 <section class="scenario" id="s7">
 <div class="scenario-header"><span class="scenario-number">7</span><h3>Working Panel (Sources / Library / Uploaded)</h3></div>
 <p class="scenario-intro">Right pane with two tabs: Library (workspace-level files the agent can draw from) and Uploaded (files attached directly in conversation). Both have clear empty-state copy.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Clicked both tabs to read empty-state copy and inspect the action affordances.</div><div><span class="label">Why:</span> The Working Panel is where the user wires knowledge into the agent. Two tabs imply two distinct mental models (workspace-level vs conversation-level); the IA decision is consequential.</div></div>
-
 <table>
 <thead><tr><th>Tab</th><th>Empty state copy</th><th>Bottom action</th></tr></thead>
 <tbody>
@@ -351,26 +355,21 @@ References to ISO 10816, ISO 13373, and Mobius Institute are real vibration-anal
 <tr><td>Uploaded</td><td>Paperclip icon + "Files attached in conversation will be shown here."</td><td>(none)</td></tr>
 </tbody>
 </table>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Clean IA separation between Library and Uploaded</div></div>
 <p>Two tabs encode two genuinely different concepts: workspace-level persistent files vs conversation-level transient attachments. The copy on each tab makes this clear without jargon.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev minor">Minor</span><span class="sev medium-conf">Medium</span><div class="finding-title">No affordance to upload directly from the Uploaded tab</div></div>
 <p>The Uploaded tab tells you files will appear here when attached in conversation, but doesn't link to the chat-input attachment affordance. New users may stare at the empty state wondering how to attach.</p>
 <div class="recommendation">Add "Use the + icon in the chat input to attach" link in the empty state, or render an upload zone directly in the tab.</div>
 </div>
 </section>
-
 <!-- =================== SCENARIO 8 =================== -->
 <section class="scenario" id="s8">
 <div class="scenario-header"><span class="scenario-number">8</span><h3>Activity reasoning UX</h3></div>
 <p class="scenario-intro">Dana exposes her step-by-step reasoning in a collapsible "Activity" block before her conversational response. Expanded by default. Persists in every turn.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Observed Activity block content across multiple turns. Compared the framing tone (third person) against the conversational message tone (first person).</div><div><span class="label">Why:</span> Reasoning transparency is a major Dana differentiator vs ChatGPT, but transparency that's always-on becomes noise. The right default matters.</div></div>
-
 <p>Activity block content samples observed in this audit:</p>
 <pre><code>The user wants me to curate an ontology for a new agent called
 CurateAuditBot, which is a reliability engineer focused on vibration
@@ -381,33 +380,27 @@ Before I proceed, I need to ask clarifying questions to understand:
 2. Depth
 3. Scope
 4. Sources</code></pre>
-
 <pre><code>The user has approved Phase 1. I need to:
 1. Create the directory structure for the ontology
 2. Create ONTOLOGY.md with core domain concepts
 3. Create rules/ directory with ISO 10816 severity classification rules
 4. Create skills/ directory with the "Analyze vibration reading" skill
 5. Fetch ISO 10816 public summary for the velocity thresholds</code></pre>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">Activity reasoning is substantive and useful for power users</div></div>
 <p>For a data-scientist or technical evaluator, seeing Dana's plan before she executes builds trust and lets them intervene if she's about to do the wrong thing.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev minor">Minor</span><span class="sev medium-conf">Medium</span><div class="finding-title">Third-person framing reads odd when expanded by default</div></div>
 <p>"The user wants me to..." reads as if Dana is talking to a third party. For non-technical users this can feel impersonal or confusing ("why is she narrating my session?").</p>
 <div class="recommendation">Reframe in first person addressing the user directly: "Got it. I'll start by asking you four questions about..." OR collapse Activity by default for non-power users.</div>
 </div>
 </section>
-
 <!-- =================== SCENARIO 9 =================== -->
 <section class="scenario" id="s9">
 <div class="scenario-header"><span class="scenario-number">9</span><h3>Use Agent handoff from Curate</h3></div>
 <p class="scenario-intro">"Use CurateAuditBot" button in top-right of Curate jumps to runtime chat. URL drops the conversation suffix. Left rail restores full set. "Curate with Dana" button enables round-trip.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Clicked "Use [Agent]" mid-curation. Observed URL transition, surface differences (file tree, working panel), greeting rendering, task chips, and the round-trip back to Curate.</div><div><span class="label">Why:</span> The handoff is where Dana hands the user from "trainer" mode to "user" mode. The mode-switch needs to be one click in either direction without losing context.</div></div>
-
 <table>
 <thead><tr><th>Element</th><th>Curate</th><th>Runtime (after Use Agent)</th></tr></thead>
 <tbody>
@@ -418,12 +411,10 @@ Before I proceed, I need to ask clarifying questions to understand:
 <tr><td>Top-right CTA</td><td>"Use CurateAuditBot"</td><td>"Curate with Dana"</td></tr>
 </tbody>
 </table>
-
 <div class="finding">
 <div class="finding-header"><span class="sev win">Win</span><span class="sev high-conf">High</span><div class="finding-title">One-click round-trip in both directions</div></div>
 <p>"Use Agent" -&gt; runtime, "Curate with Dana" -&gt; back. The mode switch is visible and intentional. Users don't get lost between trainer mode and user mode.</p>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev moderate">Moderate</span><span class="sev high-conf">High</span><div class="finding-title">Template grammar bug propagates into the runtime greeting</div></div>
 <p>The runtime greeting reads:</p>
@@ -434,33 +425,26 @@ signatures on rotating equipment, used by plant maintenance...</code></pre>
 <div class="recommendation">Bundles with the create-agent flow fix (Top 7 #1 in that audit). Drop the "I work across" template entirely, or run the role/industry text through an NLU step to produce a grammatical sentence.</div>
 </div>
 </section>
-
 <!-- =================== SCENARIO 10 =================== -->
 <section class="scenario" id="s10">
 <div class="scenario-header"><span class="scenario-number">10</span><h3>Long execution + edge observations</h3></div>
 <p class="scenario-intro">Side observations during the 5-minute execution wait, the cleanup flow, and an unrelated finding on the agents list.</p>
-
 <div class="approach"><div><span class="label">Approach:</span> Used the wait time during Dana's long execution to probe peripheral surfaces (file tree state, refresh behavior). Cleaned up by deleting the test agent via the agent detail page.</div><div><span class="label">Why:</span> The peripheral observations often surface issues that a focused walkthrough misses.</div></div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev moderate">Moderate</span><span class="sev medium-conf">Medium</span><div class="finding-title">Agent cards on the Agents list expose creator email</div></div>
 <p>The CurateAuditBot card on the Agents list showed "by giang@aitomatic.us" under the agent name. This exposes the creator's email to anyone viewing the agents list (including other workspace members and other teams' admins).</p>
 <div class="recommendation">Show the creator's display name only (e.g., "by Giang Nguyen") and reserve the email for the agent detail page where it can be put behind a hover tooltip.</div>
 </div>
-
 <div class="finding">
 <div class="finding-header"><span class="sev minor">Minor</span><span class="sev medium-conf">Medium</span><div class="finding-title">Agent delete confirmation modal still reads "Delete?"</div></div>
 <p>Same terse copy as the create-agent flow audit found. The kebab menu -&gt; Remove agent path opens a "Remove agent" modal with body "Delete?" - no agent name, no consequence statement.</p>
 <div class="recommendation">Same fix as create-agent flow Top 7 #3: adopt the integration-revoke modal pattern.</div>
 </div>
 </section>
-
 <!-- =================== TOP 7 =================== -->
 <section id="top7">
-<h2><span class="h2-eyebrow">Punch List</span>Top 7 fixes</h2>
-
+<h2>Top 7 fixes</h2>
 <div class="approach"><div><span class="label">Approach:</span> Ranked recommendations by severity x how often the user hits the issue x cost to fix. The 5-minute silent execution and tree non-refresh affect every curate session, so they lead even though no single one is Critical-by-itself in the audit.</div><div><span class="label">Why:</span> Engineering teams need ordered work, not a wishlist. Bundled fixes (where one change resolves multiple findings) get priority.</div></div>
-
 <ol>
 <li><strong>Stream inline tool-use progress during execution.</strong> <span class="sev critical">Critical</span> Replace the silent 5-minute spinner with streamed cards: "Reading ISO 10816 summary...", "Writing ontology/ONTOLOGY.md (1024 bytes)", "Writing rules/severity_classification.yaml". Each card appears as the operation starts. <em>Cost: 1-2d.</em></li>
 <li><strong>Auto-refresh the file tree when Dana writes files.</strong> <span class="sev major">Major</span> Subscribe the tree to file-mutation events (or poll every 2s during streaming). The tree should be consistent with the "Files Created" message at the moment it's posted, not minutes later. <em>Cost: 0.5-1d.</em></li>
@@ -471,14 +455,11 @@ signatures on rotating equipment, used by plant maintenance...</code></pre>
 <li><strong>Add upload affordance to the Working Panel Uploaded tab.</strong> <span class="sev minor">Minor</span> Render an upload zone in the empty state, OR link to the chat-input + icon. <em>Cost: 0.5d.</em></li>
 </ol>
 </section>
-
 <!-- =================== HONESTY =================== -->
 <section id="honesty">
-<h2><span class="h2-eyebrow">Caveats</span>Confidence &amp; caveats</h2>
-
+<h2>Confidence &amp; caveats</h2>
 <h3>Method &amp; bias</h3>
 <p>One auditor, one session, one test agent (vibration-analysis domain). Findings reproducible single-observation grade. An unscripted run by a real domain expert (e.g., a maintenance engineer) would raise confidence on Dana's domain-awareness claims and stress-test the approval workflow under more realistic question density.</p>
-
 <h3>Not tested / not reached</h3>
 <ul>
 <li>Edit mode save round-trip (intentional - did not want to corrupt the test agent mid-audit)</li>
@@ -492,7 +473,6 @@ signatures on rotating equipment, used by plant maintenance...</code></pre>
 <li>Dark-mode rendering of Curate</li>
 <li>Long conversation (5+ turn) UI behavior - the 5-minute execution wait counts but is different from a long natural conversation</li>
 </ul>
-
 <h3>Highest-confidence findings (least bias)</h3>
 <ul>
 <li>5-minute silent execution between approval and file output - timestamps verified (09:50 approve -&gt; 09:55 complete)</li>
@@ -502,11 +482,10 @@ signatures on rotating equipment, used by plant maintenance...</code></pre>
 <li>Template grammar bug propagation - same root cause as prior create-agent audit, observed in two more surfaces (AGENT.md content + runtime greeting)</li>
 </ul>
 </section>
-
 <section style="margin-top:80px;padding-top:24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:13px">
-<p>Dana curate workspace UX audit &middot; 2026-05-28</p>
+<p>Dana curate workspace UX audit · 2026-05-28</p>
 </section>
-
 </main>
+</div>
 </body>
 </html>

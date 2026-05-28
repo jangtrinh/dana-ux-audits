@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>How we audit - Dana UX</title>
 <style>
 :root { --bg:#f7f7f5; --surface:#fff; --border:#e7e5e4; --text:#18181b; --text-muted:#71717a; --text-soft:#a1a1aa; --neutral:#2563eb; --critical:#dc2626; --major:#ea580c; --moderate:#ca8a04; --minor:#6b7280; --positive:#16a34a; --shadow-sm:0 1px 2px rgba(0,0,0,.04); }
@@ -41,24 +42,64 @@ li { margin:4px 0; }
 .audit-nav a.active { color:#fff; background:rgba(255,255,255,.12); font-weight:600; }
 .audit-nav a::before { content:"\2022 "; color:#52525b; padding-right:6px; }
 .audit-nav a:first-child::before { content:"\1F4D1 "; padding-right:6px; }
+
+.layout { display:grid; grid-template-columns:260px 1fr; max-width:1400px; margin:0 auto; min-height:100vh; }
+nav.toc { background:#fff; border-right:1px solid #e7e5e4; padding:32px 24px; position:sticky; top:0; height:100vh; overflow-y:auto; font-size:13px; }
+nav.toc h2 { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:#a1a1aa; margin:28px 0 10px; font-weight:700; border:none; padding:0; }
+nav.toc h2:first-child { margin-top:0; }
+nav.toc a { display:block; padding:6px 8px; color:#18181b; text-decoration:none; border-radius:6px; margin:2px 0; }
+nav.toc a:hover { background:#f4f4f5; color:#2563eb; }
+nav.toc .jtbd-link { font-weight:600; }
+nav.toc .step-link { padding-left:24px; font-size:12px; color:#71717a; }
+nav.toc .sev-row { display:flex; align-items:center; gap:6px; font-size:11px; margin:4px 0; color:#71717a; }
+nav.toc .sev-row .sev { display:inline-flex; align-items:center; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+nav.toc .sev-row .sev.critical { background:#dc2626; color:#fff; }
+nav.toc .sev-row .sev.major { background:#ea580c; color:#fff; }
+nav.toc .sev-row .sev.moderate { background:#ca8a04; color:#fff; }
+nav.toc .sev-row .sev.minor { background:#6b7280; color:#fff; }
+nav.toc .sev-row .sev.win { background:#16a34a; color:#fff; }
+nav.toc .sev-row .sev.high-conf { background:#18181b; color:#fff; }
+nav.toc .sev-row .sev.medium-conf { background:#71717a; color:#fff; }
+main { padding:56px 72px; max-width:1040px; width:100%; }
+@media (max-width:900px) { .layout { grid-template-columns:1fr; } nav.toc { position:static; height:auto; border-right:none; border-bottom:1px solid #e7e5e4; } main { padding:32px 24px; } }
 </style>
 </head>
 <body>
-<header class="top-bar"><div class="top-bar-inner"><div class="audit-nav"><a href="index.html">All Dana audits</a><a href="dana-ux-audits-methodology.html" class="active">How we audit</a><a href="dana-onboarding-v2-ux-audit-report.html">Cross-persona JTBD</a><a href="dana-create-agent-flow-deep-dive-ux-audit-report.html">Create-agent deep dive</a><a href="dana-curate-workspace-deep-dive-ux-audit-report.html">Curate workspace deep dive</a><a href="dana-plan-benchmark-assessment.html">Plan benchmark</a></div></div></header>
+<header class="top-bar"><div class="top-bar-inner"><div class="audit-nav"><a href="index.html">All Dana audits</a><a class="active" href="dana-ux-audits-methodology.html">How we audit</a><a href="dana-onboarding-v2-ux-audit-report.html">Cross-persona JTBD</a><a href="dana-create-agent-flow-deep-dive-ux-audit-report.html">Create-agent deep dive</a><a href="dana-curate-workspace-deep-dive-ux-audit-report.html">Curate workspace deep dive</a><a href="dana-plan-benchmark-assessment.html">Plan benchmark</a></div></div></header>
+<div class="layout">
+<nav class="toc">
+<h2>Sections</h2>
+<a href="#1-we-organize-by-job-to-be-done-not-by-page" class="jtbd-link">1. We organize by Job-to-be-Done, not by page</a>
+<a href="#2-we-audit-across-multiple-personas" class="jtbd-link">2. We audit across multiple personas</a>
+<a href="#3-we-use-plain-severity-words-not-codes" class="jtbd-link">3. We use plain severity words, not codes</a>
+<a href="#4-we-label-confidence-on-every-finding" class="jtbd-link">4. We label confidence on every finding</a>
+<a href="#5-we-rank-fixes-by-impact-not-severity-alone" class="jtbd-link">5. We rank fixes by impact, not severity alone</a>
+<a href="#6-we-name-our-bias-up-front" class="jtbd-link">6. We name our bias up front</a>
+<a href="#7-we-separate-ux-from-non-ux-up-front" class="jtbd-link">7. We separate UX from non-UX up front</a>
+<a href="#8-we-audit-live-not-from-spec" class="jtbd-link">8. We audit live, not from spec</a>
+
+<h2>Severity</h2>
+<div class="sev-row"><span class="sev critical">Critical</span> Blocker</div>
+<div class="sev-row"><span class="sev major">Major</span> Activation loss</div>
+<div class="sev-row"><span class="sev moderate">Moderate</span> Friction</div>
+<div class="sev-row"><span class="sev minor">Minor</span> Polish</div>
+<div class="sev-row"><span class="sev win">Win</span> Positive</div>
+<h2>Confidence</h2>
+<div class="sev-row"><span class="sev high-conf">High</span> Cross-source</div>
+<div class="sev-row"><span class="sev medium-conf">Medium</span> Single observation</div>
+
+</nav>
 <main>
 <h1>How we audit Dana</h1>
 <p class="subtitle">The approach behind every report in this collection - and why each choice matters.</p>
-<a class="download-md" href="dana-ux-audits-methodology.md" download>Download markdown</a>
-
-<h2>1. We organize by Job-to-be-Done, not by page</h2>
+<a class="download-md" download="" href="dana-ux-audits-methodology.md">Download markdown</a>
+<h2 id="1-we-organize-by-job-to-be-done-not-by-page">1. We organize by Job-to-be-Done, not by page</h2>
 <p>Each audit follows a user trying to get something done - "build my first agent," "wire an integration," "onboard my team," "inspect the ontology." The walkthrough crosses pages naturally; findings sit in the step where a real user encounters them.</p>
 <div class="why"><strong>Why:</strong> a page-by-page audit produces a feature inventory. A job-by-job audit produces a story stakeholders can act on. The same friction shows up differently depending on the user's goal - JTBD framing surfaces those persona-specific impacts.</div>
-
-<h2>2. We audit across multiple personas</h2>
+<h2 id="2-we-audit-across-multiple-personas">2. We audit across multiple personas</h2>
 <p>For broad audits we walk four personas: a non-technical SME, a technical evaluator, an IT/workspace admin, and a data-scientist power user. Each persona starts with their own goal and tolerance for friction.</p>
 <div class="why"><strong>Why:</strong> the same surface can be a major win for one persona and a major bug for another. Dana's Curate file tree is a great example - polished power UX for a data scientist, mental-model trap for a non-technical SME. Single-persona audits miss this.</div>
-
-<h2>3. We use plain severity words, not codes</h2>
+<h2 id="3-we-use-plain-severity-words-not-codes">3. We use plain severity words, not codes</h2>
 <table>
 <thead><tr><th>Label</th><th>Means</th></tr></thead>
 <tbody>
@@ -70,8 +111,7 @@ li { margin:4px 0; }
 </tbody>
 </table>
 <div class="why"><strong>Why:</strong> codes like "F17" or "V2-N12" force the reader to look up a glossary. Severity words are instantly scannable and let stakeholders prioritize without legend-hopping. Severity is always rated from the target persona's perspective, not the auditor's general one.</div>
-
-<h2>4. We label confidence on every finding</h2>
+<h2 id="4-we-label-confidence-on-every-finding">4. We label confidence on every finding</h2>
 <table>
 <thead><tr><th>Confidence</th><th>Means</th></tr></thead>
 <tbody>
@@ -81,13 +121,11 @@ li { margin:4px 0; }
 </tbody>
 </table>
 <div class="why"><strong>Why:</strong> not every finding deserves the same weight. Cross-persona findings are more reliable than single-persona ones. Surfacing this prevents over-acting on shaky signal and under-acting on the strongest signal.</div>
-
-<h2>5. We rank fixes by impact, not severity alone</h2>
+<h2 id="5-we-rank-fixes-by-impact-not-severity-alone">5. We rank fixes by impact, not severity alone</h2>
 <p>The "Top 7 fixes" list in each report ranks recommendations by severity x persona breadth x ease (how cheap the fix is). The result is roughly "which fixes give the most reader-perceptible UX improvement per engineering hour."</p>
 <div class="why"><strong>Why:</strong> a Critical that affects 1% of users may rank lower than a Moderate that affects everyone. Engineering teams need to know what to do first, not just what's wrong.</div>
-
-<h2>6. We name our bias up front</h2>
-<p>Most audits in this collection were run by one auditor playing all personas, scripted, with knowledge of prior audits. That setup has confirmation bias built in. Every report has a "Confidence & caveats" section that lists:</p>
+<h2 id="6-we-name-our-bias-up-front">6. We name our bias up front</h2>
+<p>Most audits in this collection were run by one auditor playing all personas, scripted, with knowledge of prior audits. That setup has confirmation bias built in. Every report has a "Confidence &amp; caveats" section that lists:</p>
 <ul>
 <li>What the auditor likely confirmed because the script pointed there</li>
 <li>What surfaces weren't reached at all</li>
@@ -95,15 +133,13 @@ li { margin:4px 0; }
 <li>Whether an outside-user unscripted run happened (the gold standard for headline confidence)</li>
 </ul>
 <div class="why"><strong>Why:</strong> hiding bias makes the report look stronger but weakens it in practice. Stakeholders can over-invest in confirmation-biased findings. Naming the bias lets them weight findings appropriately.</div>
-
-<h2>7. We separate UX from non-UX up front</h2>
+<h2 id="7-we-separate-ux-from-non-ux-up-front">7. We separate UX from non-UX up front</h2>
 <p>The body of every report is UX-only: visual design, interaction, copy, IA, perceived intelligence, friction, accessibility, states, consistency. Non-UX observations that surface during the walkthrough (security exposures, backend data bugs, feature-capability notes) live in an Appendix with explicit "route to X team" callouts.</p>
 <div class="why"><strong>Why:</strong> mixing security findings into a UX punch list dilutes both. The Appendix preserves the observation without letting it derail the UX conversation.</div>
-
-<h2>8. We audit live, not from spec</h2>
+<h2 id="8-we-audit-live-not-from-spec">8. We audit live, not from spec</h2>
 <p>Every finding in these reports was observed by running Dana in a real browser session - not inferred from screenshots, docs, or the spec. Screenshots in each report come from those sessions.</p>
 <div class="why"><strong>Why:</strong> live behavior often diverges from spec. The graceful-degradation behavior of an ungrounded agent (a major win in the cross-persona audit) only shows up if you actually run the agent before training it.</div>
-
 </main>
+</div>
 </body>
 </html>

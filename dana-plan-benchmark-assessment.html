@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Dana - Onboarding UX Plan Benchmark Assessment</title>
 <style>
 :root { --bg:#f7f7f5; --surface:#fff; --border:#e7e5e4; --text:#18181b; --text-muted:#71717a; --text-soft:#a1a1aa; --neutral:#2563eb; --code-bg:#f4f4f5; --shadow-sm:0 1px 2px rgba(0,0,0,.04); }
@@ -47,71 +48,111 @@ a:hover { text-decoration:underline; }
 .audit-nav a.active { color:#fff; background:rgba(255,255,255,.12); font-weight:600; }
 .audit-nav a::before { content:"\2022 "; color:#52525b; padding-right:6px; }
 .audit-nav a:first-child::before { content:"\1F4D1 "; padding-right:6px; }
+
+.layout { display:grid; grid-template-columns:260px 1fr; max-width:1400px; margin:0 auto; min-height:100vh; }
+nav.toc { background:#fff; border-right:1px solid #e7e5e4; padding:32px 24px; position:sticky; top:0; height:100vh; overflow-y:auto; font-size:13px; }
+nav.toc h2 { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:#a1a1aa; margin:28px 0 10px; font-weight:700; border:none; padding:0; }
+nav.toc h2:first-child { margin-top:0; }
+nav.toc a { display:block; padding:6px 8px; color:#18181b; text-decoration:none; border-radius:6px; margin:2px 0; }
+nav.toc a:hover { background:#f4f4f5; color:#2563eb; }
+nav.toc .jtbd-link { font-weight:600; }
+nav.toc .step-link { padding-left:24px; font-size:12px; color:#71717a; }
+nav.toc .sev-row { display:flex; align-items:center; gap:6px; font-size:11px; margin:4px 0; color:#71717a; }
+nav.toc .sev-row .sev { display:inline-flex; align-items:center; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+nav.toc .sev-row .sev.critical { background:#dc2626; color:#fff; }
+nav.toc .sev-row .sev.major { background:#ea580c; color:#fff; }
+nav.toc .sev-row .sev.moderate { background:#ca8a04; color:#fff; }
+nav.toc .sev-row .sev.minor { background:#6b7280; color:#fff; }
+nav.toc .sev-row .sev.win { background:#16a34a; color:#fff; }
+nav.toc .sev-row .sev.high-conf { background:#18181b; color:#fff; }
+nav.toc .sev-row .sev.medium-conf { background:#71717a; color:#fff; }
+main { padding:56px 72px; max-width:1040px; width:100%; }
+@media (max-width:900px) { .layout { grid-template-columns:1fr; } nav.toc { position:static; height:auto; border-right:none; border-bottom:1px solid #e7e5e4; } main { padding:32px 24px; } }
 </style>
 </head>
 <body>
-<header class="top-bar"><div class="top-bar-inner"><div class="audit-nav"><a href="index.html">All Dana audits</a><a href="dana-ux-audits-methodology.html">How we audit</a><a href="dana-onboarding-v2-ux-audit-report.html">Cross-persona JTBD</a><a href="dana-create-agent-flow-deep-dive-ux-audit-report.html">Create-agent deep dive</a><a href="dana-curate-workspace-deep-dive-ux-audit-report.html">Curate workspace deep dive</a><a href="dana-plan-benchmark-assessment.html" class="active">Plan benchmark</a></div></div></header>
+<header class="top-bar"><div class="top-bar-inner"><div class="audit-nav"><a href="index.html">All Dana audits</a><a href="dana-ux-audits-methodology.html">How we audit</a><a href="dana-onboarding-v2-ux-audit-report.html">Cross-persona JTBD</a><a href="dana-create-agent-flow-deep-dive-ux-audit-report.html">Create-agent deep dive</a><a href="dana-curate-workspace-deep-dive-ux-audit-report.html">Curate workspace deep dive</a><a class="active" href="dana-plan-benchmark-assessment.html">Plan benchmark</a></div></div></header>
+<div class="layout">
+<nav class="toc">
+<h2>Sections</h2>
+<a href="#executive-summary" class="jtbd-link">Executive Summary</a>
+<a href="#benchmark-assessment-by-dimension" class="jtbd-link">Benchmark Assessment by Dimension</a>
+<a href="#top-2-industry-standard-moves-missing-from-v2" class="jtbd-link">Top 2 Industry-Standard Moves Missing from v2</a>
+<a href="#severity-rubric-state" class="jtbd-link">Severity Rubric State</a>
+<a href="#comparison-to-industry-practices" class="jtbd-link">Comparison to Industry Practices</a>
+<a href="#unresolved-questions" class="jtbd-link">Unresolved Questions</a>
+
+<h2>Severity</h2>
+<div class="sev-row"><span class="sev critical">Critical</span> Blocker</div>
+<div class="sev-row"><span class="sev major">Major</span> Activation loss</div>
+<div class="sev-row"><span class="sev moderate">Moderate</span> Friction</div>
+<div class="sev-row"><span class="sev minor">Minor</span> Polish</div>
+<div class="sev-row"><span class="sev win">Win</span> Positive</div>
+<h2>Confidence</h2>
+<div class="sev-row"><span class="sev high-conf">High</span> Cross-source</div>
+<div class="sev-row"><span class="sev medium-conf">Medium</span> Single observation</div>
+
+</nav>
 <main>
 <h1>Dana - Onboarding UX Plan Benchmark Assessment</h1>
 <p class="subtitle">Industry benchmark of the cross-persona audit plan against Nielsen Norman, Maze, UserTesting standards - 2026-05-27</p>
-<a class="download-md" href="dana-plan-benchmark-assessment.md" download>Download markdown</a>
-
-<p><strong>Date:</strong> 2026-05-27 14:43<br />
-<strong>Predecessor:</strong> ux-audit-260527-1408-dana-onboarding-walkthrough-report.md<br />
+<a class="download-md" download="" href="dana-plan-benchmark-assessment.md">Download markdown</a>
+<p><strong>Date:</strong> 2026-05-27 14:43<br/>
+<strong>Predecessor:</strong> ux-audit-260527-1408-dana-onboarding-walkthrough-report.md<br/>
 <strong>Scope:</strong> Evaluate v2 plan against Nielsen Norman Group, Maze, UserTesting, and published onboarding research standards.</p>
-<hr />
-<h2>Executive Summary</h2>
+<hr/>
+<h2 id="executive-summary">Executive Summary</h2>
 <p>v2 is a <strong>pragmatic step up from v1</strong> (adds personas, timing, reset protocol) but <strong>falls below industry standard for defensible onboarding research</strong>. It mixes heuristic rigor with task-based framing without committing to either. Missing: post-task perception scoring (SUS), moderated observation depth (video/transcript), and cross-persona synthesis methodology. <strong>Top 2 gaps:</strong> no SUS/SEQ scoring, no remote-moderated evidence rig.</p>
-<hr />
-<h2>Benchmark Assessment by Dimension</h2>
+<hr/>
+<h2 id="benchmark-assessment-by-dimension">Benchmark Assessment by Dimension</h2>
 <h3>1. Sample Size for Heuristic-Style Audits</h3>
-<p><strong>Plan:</strong> 1 auditor playing 4 personas (all same user account, admin context)<br />
+<p><strong>Plan:</strong> 1 auditor playing 4 personas (all same user account, admin context)<br/>
 <strong>Industry Standard:</strong> Nielsen recommends 3–5 independent evaluators for heuristic evaluation; task-based testing requires 8–12 diverse participants for qualitative onboarding (NN/G finding: 5 users finds ~85% of issues; beyond 5, diminishing returns)</p>
-<p><strong>Score: BELOW</strong><br />
+<p><strong>Score: BELOW</strong><br/>
 - <strong>Fidelity gap:</strong> Four personas played by one person in admin mode ≠ four independent users. Persona A (SME) using admin account is fundamentally different from a real non-technical first-time user.
 - <strong>Recommendation:</strong> Recruit 4–5 external participants per primary persona (at minimum 2 per persona) to validate empty-state, first-login, and auth paths v1 couldn't reach.</p>
-<hr />
+<hr/>
 <h3>2. Task-Based vs. Heuristic vs. Cognitive Walkthrough</h3>
-<p><strong>Plan:</strong> Heuristic + scripted JTBD (→ "Jobs to be Done") + personas = hybrid walkthrough<br />
+<p><strong>Plan:</strong> Heuristic + scripted JTBD (→ "Jobs to be Done") + personas = hybrid walkthrough<br/>
 <strong>Industry Standard:</strong> True task-based testing (NN/G): set task, observe <em>without leading</em>, measure completion and friction. Cognitive walkthrough: first-time-user mental model focus. Heuristic: evaluator-vs-principles, no real user.</p>
-<p><strong>Score: AT (with caveats)</strong><br />
+<p><strong>Score: AT (with caveats)</strong><br/>
 - v2 is <strong>honest about being a heuristic walkthrough with JTBD framing</strong> - that's better than v1's pure heuristic.
 - <strong>Gap:</strong> Scripts ("build one agent in 15 min") are strawman targets, not validated baseline. Real task-based testing would randomize task order, suppress cues, measure actual completion rate.
 - <strong>Trade-off:</strong> v2 trades task-based rigor (high friction, 12+ participants) for speed (4 personas, ~10h total). Acceptable for pre-launch validation if data is treated as <em>directional, not normative</em>.</p>
-<hr />
+<hr/>
 <h3>3. Time-on-Task Metric Definition</h3>
-<p><strong>Plan:</strong> TTFA (Time to First Agent), TTFU (Time to First Useful Answer) mentioned; no measurement protocol<br />
+<p><strong>Plan:</strong> TTFA (Time to First Agent), TTFU (Time to First Useful Answer) mentioned; no measurement protocol<br/>
 <strong>Industry Standard:</strong> MeasuringU &amp; Maze: clock starts at explicit task start state, ends at user declares task <em>complete</em> (post-task SUS measures confidence). Stopwatch ambiguity kills validity.</p>
-<p><strong>Score: BELOW</strong><br />
+<p><strong>Score: BELOW</strong><br/>
 - <strong>Critical gap:</strong> v2 template says "t+mm:ss from run start" but never defines:
   - When does TTFA clock <em>start</em>? At Home first paint? After modal dismissal? When Curate modal opens?
   - When does TTFA clock <em>stop</em>? First successful agent creation? Routing to Curate? User's subjective "ready to ask"?
   - TTFU: "first useful answer" is purely subjective - no rubric, no post-task question.
 - <strong>Recommendation:</strong> Adopt post-task Single Ease Question (SEQ): "How easy was it to create your agent?" (1–7 scale). Add explicit timer gates in reset protocol.</p>
-<hr />
+<hr/>
 <h3>4. Evidence Depth</h3>
-<p><strong>Plan:</strong> Screenshots + step timings + friction notes (minor/blocked). No video, no transcript, no SUS/SEQ, no heatmaps<br />
+<p><strong>Plan:</strong> Screenshots + step timings + friction notes (minor/blocked). No video, no transcript, no SUS/SEQ, no heatmaps<br/>
 <strong>Industry Standard:</strong> Remote moderated (Zoom/Lookback): video capture + transcription + post-task SUS (10 questions) + per-task SEQ (1 question) + optional session replay heatmaps. Maze/UserTesting: automated video + analytics dashboard.</p>
-<p><strong>Score: BELOW</strong><br />
+<p><strong>Score: BELOW</strong><br/>
 - v2's template is <strong>lightweight and reproducible</strong> (good for multiple runs), but lacks <strong>perceived usability signal</strong>.
 - <strong>Missing:</strong> Post-task questionnaire (no SUS, no SEQ, no NPS). Without this, "friction notes" are subjective; impossible to rank across personas.
 - <strong>Cost-benefit:</strong> Video capture adds 2–3h per run but unlocks full quote-ability and team consensus. Maze remote testing would add platform cost (~$500–$2k/run) but auto-transcribes.
 - <strong>Minimum viable increase:</strong> Add 1 post-task SEQ question per run (7-point): "How easy was it to get your agent ready to use?" Aggregate across personas.</p>
-<hr />
+<hr/>
 <h3>5. Severity Rubric Consistency</h3>
-<p><strong>Plan:</strong> Adopts NN/g S0–S3 from v1; no explicit re-calibration in v2 phase files<br />
+<p><strong>Plan:</strong> Adopts NN/g S0–S3 from v1; no explicit re-calibration in v2 phase files<br/>
 <strong>Industry Standard:</strong> NN/g scale (Jakob Nielsen) is industry-standard; requires <em>per-issue</em> scoring on <strong>frequency × impact × persistence</strong>. Most teams calibrate rubric post-data (e.g., "anything blocking &gt;2 personas = S1").</p>
-<p><strong>Score: AT</strong><br />
+<p><strong>Score: AT</strong><br/>
 - v1's S0–S3 scale is defensible and sourced (Nielsen).
 - <strong>Risk:</strong> v2 phase files don't re-apply rubric to <em>new findings</em> (phase-01 through phase-04 are still unwritten). Drift likely post-execution.
 - <strong>Recommendation:</strong> Before phase-05 rollup, add a 2-step calibration:
   1. <strong>Individual phase:</strong> Mark every finding with (frequency: 1–4 personas, impact: data-loss/conversion/friction/polish, persistence: every run or edge-case).
   2. <strong>Rollup synthesis:</strong> Re-rank severity based on aggregate frequency (e.g., F27 popover bug blocks all 4 personas → stays S1).</p>
-<hr />
+<hr/>
 <h3>6. Cross-Persona Rollup</h3>
-<p><strong>Plan:</strong> Phase-05 is listed as "Cross-persona rollup report" with no detail<br />
+<p><strong>Plan:</strong> Phase-05 is listed as "Cross-persona rollup report" with no detail<br/>
 <strong>Industry Standard:</strong> Affinity mapping + frequency binning + impact scoring. Serious orgs (Stripe, Anthropic) run synthesis workshop: "What % of users hit this friction?"</p>
-<p><strong>Score: BELOW</strong><br />
+<p><strong>Score: BELOW</strong><br/>
 - Phase-05 file is not detailed; plan says "ranking by activation impact" but provides no synthesis method.
 - <strong>Missing:</strong> Rollup should include:
   - Heatmap: which findings hit which personas (matrix)?
@@ -119,11 +160,11 @@ a:hover { text-decoration:underline; }
   - Activation blocker ranking: does F6 (popover) block any persona's JTBD completion? Actual yes/no per persona.
   - New-finding dedup: did phase-02 + phase-03 discover the same integration issue twice?
 - <strong>Recommendation:</strong> Use affinity board format (Miro/FigJam) with: Finding ID | Description | Personas affected | v1 vs v2 status | Activation impact | Severity.</p>
-<hr />
-<h2>Top 2 Industry-Standard Moves Missing from v2</h2>
+<hr/>
+<h2 id="top-2-industry-standard-moves-missing-from-v2">Top 2 Industry-Standard Moves Missing from v2</h2>
 <h3>1. <strong>Post-Task Usability Perception (SUS or SEQ)</strong></h3>
 <p><strong>Why:</strong> v2 captures friction <em>observations</em> but no <em>user sentiment</em>. A finding marked "minor friction" by the auditor might be "moderate frustration" to a real user. NN/g standard is post-test SUS (10 questions, 5 min) or per-task Single Ease Question (1 question, 10 sec). Maze/UserTesting auto-capture this.</p>
-<p><strong>Cost:</strong> +10 min per phase (4 × 10 min SEQ per phase). SEQ is 1 question: "How easy was it to complete your task?" (1–7).<br />
+<p><strong>Cost:</strong> +10 min per phase (4 × 10 min SEQ per phase). SEQ is 1 question: "How easy was it to complete your task?" (1–7).<br/>
 <strong>Payoff:</strong> Quantify activation barrier. If all 4 personas rate TTFA ≥6/7, F1 (Home hierarchy) is polish, not blocker. If 3/4 rate ≤4/7, it's S1.</p>
 <h3>2. <strong>Remote-Moderated Observation (Video/Transcript) with Moderator Notes</strong></h3>
 <p><strong>Why:</strong> Single-evaluator scripts miss the <em>why</em> behind friction. Real moderated testing captures:
@@ -131,10 +172,10 @@ a:hover { text-decoration:underline; }
 - Implicit signals (hesitation, re-reading, scrolling up).
 - Recovery patterns (how users self-correct after a wrong click).</p>
 <p>v2's "friction: blocked" binary doesn't distinguish "user recovered in 5s" from "user gave up."</p>
-<p><strong>Cost:</strong> +5–8 h per run (Zoom recording + async transcript). Could defer to v3 if budget-constrained.<br />
+<p><strong>Cost:</strong> +5–8 h per run (Zoom recording + async transcript). Could defer to v3 if budget-constrained.<br/>
 <strong>Payoff:</strong> Video clips become "supporting evidence" for design critiques. Turns "F1 is S1" into "watch Persona A scroll past the hero 3 times in 90 seconds - hierarchy is broken."</p>
-<hr />
-<h2>Severity Rubric State</h2>
+<hr/>
+<h2 id="severity-rubric-state">Severity Rubric State</h2>
 <p>v2's adoption of NN/g S0–S3 is <strong>appropriate and defensible</strong>. However, <strong>consistency risk is HIGH</strong> because:
 - v1 was a single auditor; v2 has 4 parallel runs, each filling evidence template independently.
 - Without <em>a priori</em> calibration (frequency thresholds, e.g., "3+ personas = auto-S1"), post-hoc ranking will diverge.</p>
@@ -143,8 +184,8 @@ a:hover { text-decoration:underline; }
 - <strong>S1:</strong> Blocks JTBD completion in ≥2 personas, or impacts activation in ≥1 (major).
 - <strong>S2:</strong> Causes friction (slow, confusing) but JTBD completion intact (moderate).
 - <strong>S3:</strong> Cosmetic / accessibility gap (minor).</p>
-<hr />
-<h2>Comparison to Industry Practices</h2>
+<hr/>
+<h2 id="comparison-to-industry-practices">Comparison to Industry Practices</h2>
 <table>
 <thead>
 <tr>
@@ -193,16 +234,17 @@ a:hover { text-decoration:underline; }
 </tr>
 </tbody>
 </table>
-<hr />
-<h2>Unresolved Questions</h2>
+<hr/>
+<h2 id="unresolved-questions">Unresolved Questions</h2>
 <ol>
 <li><strong>Is phase-05 "rollup" a written synthesis, or just a data dump?</strong> Plan says "ranking by activation impact" but no format specified. Recommend: Affinity board or cross-tabulation matrix.</li>
 <li><strong>Will v2 data be treated as <em>directional</em> (one-way learning) or <em>normative</em> (repeatable benchmark)?</strong> If normative, real external participants are non-negotiable; if directional, v2 sample is acceptable.</li>
 <li><strong>Does Dana have acceptance criteria for "onboarding fixed"?</strong> v2 targets TTFA 12–20 min; is that industry baseline or aspirational?</li>
 <li><strong>Post-v2, is a v3 planned covering mobile, Safari, error paths, and fresh signups?</strong> (Currently out of scope.)</li>
 </ol>
-<hr />
+<hr/>
 <p><strong>Recommendation:</strong> Proceed with v2 as <em>diagnostic heuristic + task-framing</em>, not as <em>normative task-based research</em>. Pre-phase-01, commit to: (a) post-phase-05 SUS/SEQ aggregation (10 min), (b) phase-05 affinity synthesis template (30 min). If budget allows, capture 1 Zoom recording per persona as supporting evidence (defer full moderation to v3).</p>
 </main>
+</div>
 </body>
 </html>
