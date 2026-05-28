@@ -22,7 +22,7 @@ finding_counts:
 
 # Dana Onboarding UX Audit
 
-## TL;DR - JTBD scorecard
+## Summary - TL;DR - JTBD scorecard
 
 ### Three biggest UX wins
 
@@ -36,35 +36,35 @@ finding_counts:
 - **Destructive-action UX is wildly inconsistent.** Agent delete is a terse "Delete?", integration revoke is rich. Same product, opposite quality.
 - **Curate file tree exposes raw markdown by default.** Intentional power-user UX for data scientists, mental-model trap for non-technical SMEs. Tier the visibility; don't remove it.
 
-## Build my first expert agent
+## Job-to-be-Done 1 - Build my first expert agent
 
 > **Approach:** Walked a non-technical SME from cold Home through create-agent, into Curate, answering Dana's first turn, then asking the agent a real domain question.
 > **Why:** This is Dana's activation path. If a first-time domain expert can't reach a useful answer in 15 minutes, the product hasn't proved its value.
 
 I want an agent that knows our SOPs. I'll create it, give it one document, answer whatever Dana asks, and then ask it a real question my team would ask.
 
-## Wire a Notion integration to my agent
+## Job-to-be-Done 2 - Wire a Notion integration to my agent
 
 > **Approach:** Walked a technical evaluator through "+ New Integration," located the right MCP path, installed Notion, and probed the binding to an agent.
 > **Why:** Integrations are how Dana clears the enterprise-ready bar for evaluators comparing it to ChatGPT or Claude. The Notion path tests the most common "I want my docs in the agent" workflow.
 
 Show me you can do Notion. I want to install the integration, bind it to an agent, and ask the agent something only Notion would know.
 
-## Onboard my team
+## Job-to-be-Done 3 - Onboard my team
 
 > **Approach:** Walked an IT admin through Org Settings, Members, Roles & Permissions, Audit Log, and the invite flow (modal only, no invites sent).
 > **Why:** Admins gate adoption. They need to understand scope (Org vs Team), the governance model, and the audit trail before they invite their team.
 
 Before I invite my team, I want to understand what I'm signing up for: what's org-wide vs team-scoped, where do invitations and roles live, and what will a new user see on day one?
 
-## Inspect & edit my agent's ontology
+## Job-to-be-Done 4 - Inspect & edit my agent's ontology
 
 > **Approach:** Walked a data-scientist power user into Curate, opened AGENT.md and ONTOLOGY.md, tested Edit mode (Code/Rich Text split, Cmd+S), and observed adaptive clarifying questions.
 > **Why:** The file tree is either a power-user feature or a leak. Running it as a DS settles which side it lives on - and shapes whether the recommendation is "remove" or "tier visibility."
 
 I want to inspect the agent's underlying spec, edit the ontology directly, and verify changes propagate to the runtime.
 
-## Top 7 UX fixes
+## Punch List - Top 7 UX fixes
 
 > **Approach:** Ranked recommendations by severity x persona breadth x fix cost. A Moderate that affects all four personas can outrank a Critical that affects one.
 > **Why:** This orders fixes by "biggest reader-perceptible UX improvement per engineering hour," not by severity alone. Engineering teams need to know what to do first.
@@ -79,7 +79,7 @@ Ranked by severity × persona breadth × ease. **All UX scope**; security / feat
 6. **Reduce 8-question cognitive load in Curate intake.** Moderate Restore chips for categorical questions (Users / Sources), or use progressive disclosure (ask one category, get an answer, ask the next). *Cost: 1–2d.*
 7. **Fix agent-delete copy + feedback.** Moderate Add agent name + consequence sentence + type-to-confirm + success toast. Bundles naturally with #3. *Cost: ~0.5d.*
 
-## Confidence & caveats
+## Caveats - Confidence & caveats
 
 ### Method & bias
 
@@ -107,7 +107,7 @@ Dark-mode entirely (tooltip, contrast, aria-labels) · Help & feedback menu · U
 | 4 · Inspect ontology | ~6 min | 20 min | Did not run full edit→propagation test |
 
 
-## Non-UX observations
+## Appendix - Non-UX observations
 
 Surfaced incidentally during the UX audit. Listed here so they aren't lost, but they do NOT drive UX recommendations.
 

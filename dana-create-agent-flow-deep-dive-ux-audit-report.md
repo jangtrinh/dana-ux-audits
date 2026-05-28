@@ -21,7 +21,7 @@ finding_counts:
 
 # Dana - Create-Agent Flow
 
-## TL;DR
+## Summary - TL;DR
 
 > **Approach:** Compressed nine sub-scenario walks into one summary plus the top wins and bugs that stand out across the whole flow.
 > **Why:** Readers want the headline first. This page must point them to the few things that matter before they read the per-scenario detail.
@@ -339,7 +339,7 @@ The role text "UX audit of the create-agent flow" produced UX-themed clarifying 
 
 Green "Agent removed" toast appears at the bottom of Home after successful deletion. Closes prior gap where delete had no immediate feedback.
 
-## Top 7 fixes
+## Punch List - Top 7 fixes
 
 > **Approach:** Ranked recommendations by severity x user-frequency x ease. Click-outside data loss (Critical) leads because it affects every user, every session.
 > **Why:** Engineers need an ordered list, not a wishlist. Severity alone doesn't capture how many users hit the issue or how cheap the fix is.
@@ -354,7 +354,7 @@ Ranked by severity × user-frequency × ease.
 6. **Add validation feedback - long names, duplicate names, attach-file format hint.** Moderate Inline counter on name (after 80% of max), async duplicate check on blur, helper text for Attach File (formats + size + outcome). *Cost: 1d.*
 7. **Keep "Create Agent" CTA in tab order when disabled.** Moderate Use `aria-disabled` + `tabindex="0"` instead of HTML `disabled` so keyboard users can find the primary action. *Cost: <0.5d.*
 
-## Confidence & caveats
+## Caveats - Confidence & caveats
 
 ### Method & bias
 

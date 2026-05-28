@@ -117,6 +117,7 @@ For the test agent (a "reliability engineer interpreting vibration signatures on
 ```
 
 > ✅ **Domain awareness verified**
+> References to ISO 10816, ISO 13373, and Mobius Institute are real vibration-analysis standards - Dana didn't fabricate them, she pulled from her general knowledge of the domain inferred from the role text. This is the strongest perceived-intelligence moment in the entire curate flow.
 
 ### Clarifying questions adapt to inferred domain with real-world vocabulary
 

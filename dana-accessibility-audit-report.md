@@ -21,7 +21,7 @@ finding_counts:
 
 # Dana - Accessibility Audit
 
-## How accessible is Dana?
+## TL;DR - How accessible is Dana?
 
 Dana ships clean visual polish but assistive-technology support has structural gaps. A keyboard-only user cannot open an agent card. A screen reader gets no "dialog" announcement when the Create-Agent modal opens. Body text uses a semantic `text-tertiary` color that is **0.09 below** the WCAG 4.5:1 minimum, putting every agent card description, owner line, and tag below threshold.
 
@@ -39,7 +39,7 @@ None of these are visual-design failures. They are 4 to 8 lines of code each (co
 - **Create-Agent modal has no dialog semantics** - no `role="dialog"`, no `aria-modal`, no `aria-labelledby` (Critical, WCAG 4.1.2)
 - **Color contrast fails systemically** - `text-tertiary` #787878 at 4.41:1, `text-gray-500` #999999 at 2.75:1 (Serious, WCAG 1.4.3)
 
-## WCAG 2.1 AA per surface
+## Scorecard - WCAG 2.1 AA per surface
 
 > **Approach:** axe-core 4.10.2 injected via direct CDP into bb-browser's controlled Chrome, scanning each surface's rendered DOM. Rule set: wcag2a + wcag2aa + wcag21a + wcag21aa + best-practice.
 > **Why:** Automated scanning catches roughly one third of WCAG issues but does so reliably and reproducibly. Numbers below are the lower bound. Manual SR + keyboard checks add the rest.
@@ -299,7 +299,7 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 
 **Recommendation:** Mark as `<h2>`. Keeps heading hierarchy: H1 (agent name in top bar) → H2 (greeting in conversation) → future H3 (each Dana response).
 
-## Ranked by severity x breadth x effort
+## Top 7 fixes - Ranked by severity x breadth x effort
 
 1. **Make agent cards keyboard-accessible.** Replace each card's wrapping `<div>` with `<button>` or `<a>`. Critical Single-component change. Unblocks every keyboard user.
 2. **Add dialog semantics to Create-Agent modal.** Three attributes: `role="dialog"` + `aria-modal="true"` + `aria-labelledby="<h2-id>"`. Better: migrate to Radix Dialog primitive. Critical
@@ -309,15 +309,19 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 6. **Fix heading hierarchy.** Add `<h1>` for page title on every page. Demote or promote agent cards / greetings so hierarchy never skips. Moderate
 7. **Darken `text-gray-500` for version label + section headers in menus.** Promote to `text-gray-700` on these specific elements. Moderate
 
-## What this audit did and did not cover
+## Confidence & caveats - What this audit did and did not cover
 
 > ⚠️ **Method**
+> Single auditor, automated scan (axe-core 4.10.2 WCAG 2.1 AA + best-practice) + DOM inspection via direct CDP into bb-browser's controlled Chrome. The bb-browser MCP stdio bridge was unreachable - a small Python CDP driver (`cdp_driver.py` in the plan dir) bypassed it. Wall-clock: ~60 min including tooling setup.
 
 > ⚠️ **Bias**
+> The auditor wrote earlier UX reports on Dana and went into this scan knowing the app well. Confirmation bias risk: focused on the screens already mapped. Surfaces NOT scanned in this pass: sign-in page (would require log-out), Admin / Settings pages, error states, file-upload modal, OAuth integration popups. A follow-up scan should cover these.
 
 > ⚠️ **Tool limits**
+> Automated tools catch ~30% of WCAG issues. The remaining ~70% require manual SR testing with VoiceOver (macOS), NVDA (Windows), or TalkBack (Android) AND a real keyboard-only walkthrough by a user who relies on assistive tech. None of those happened here. Findings here are the lower-bound real impact is likely worse, not better.
 
 > **Confidence**
+> Headline confidence: **Medium**. Specific findings:
 > - **High confidence**: cross-source observations (axe + DOM inspection + visual screenshot all confirm). Examples: agent cards are `<div>`, modal has no role, contrast ratios are exact axe measurements.
 > - **Medium confidence**: single-method observations. Example: focus-return on modal close test was CDP-only and known to have flaky timing.
 
@@ -338,7 +342,7 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 - How does the platform handle `prefers-reduced-motion`? Not tested.
 - Are there any data tables or charts in admin pages that would need `<th scope>` / `aria-describedby`?
 
-## Raw axe-core output
+## Appendix - Raw axe-core output
 
 Full JSON for each surface scan lives in the plan dir at `plans/260528-1911-dana-accessibility-audit/evidence/`:
 
