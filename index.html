@@ -79,13 +79,13 @@ h1 { font-size:36px; font-weight:700; margin:0 0 8px; letter-spacing:-.025em; }
 </ul>
 </a>
 <a href="dana-accessibility-audit-report.html" class="report-card">
-<div class="card-meta"><span>2026-05-28</span><span class="dot">&bull;</span><span>v0.2.116</span></div>
+<div class="card-meta"><span>2026-05-29</span><span class="dot">&bull;</span><span>v0.2.119</span></div>
 <h2>Accessibility audit</h2>
-<p class="scope">WCAG 2.1 AA scan across shell, library, agents, modal, curate</p>
+<p class="scope">Full WCAG 2.1 A + AA conformance check (43 criteria) across shell, library, agents, modal, curate</p>
 <ul>
-<li>Critical: agent cards are plain <code>&lt;div&gt;</code> with no role/tabindex - keyboard users locked out (WCAG 2.1.1)</li>
-<li>Critical: Create-Agent modal has no <code>role="dialog"</code>, no <code>aria-modal</code>, no accessible name (WCAG 4.1.2)</li>
-<li>Serious: <code>text-tertiary</code> #787878 fails contrast by 0.09 - 30+ failing nodes app-wide (WCAG 1.4.3)</li>
+<li>Verdict: Dana does not meet WCAG Level A - 2 blockers (keyboard-unreachable agent cards 2.1.1; modal with no dialog role 4.1.2)</li>
+<li>Major: screen readers are never told Dana replied - no live region in the conversation (4.1.3), verified by sending a real message</li>
+<li>43-criterion checklist (7 Fail, 5 Partial, 15 Pass, 3 N/A, 13 Not-tested), annotated screenshots, exec/legal risk framing</li>
 </ul>
 </a>
 </div>

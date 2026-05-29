@@ -1,6 +1,6 @@
 # Dana UX Audits
 
-A collection of UX + accessibility audit reports for [Dana](https://dana.aitomatic.com) (Aitomatic) at v0.2.114 / v0.2.116.
+A collection of UX + accessibility audit reports for [Dana](https://dana.aitomatic.com) (Aitomatic). UX audits scanned at v0.2.114; the accessibility audit is a full WCAG 2.1 A + AA conformance check re-verified at v0.2.119.
 
 **Live site:** https://jangtrinh.github.io/dana-ux-audits/
 
