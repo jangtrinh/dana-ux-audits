@@ -1,21 +1,23 @@
 ---
 title: Dana - Accessibility Audit
-subtitle: WCAG 2.1 AA scan across Shell, Library, Agents, Create-Agent modal, Curate - v0.2.116
+subtitle: WCAG 2.1 AA scan across Shell, Library, Agents, Create-Agent modal, Curate - v0.2.119
 report_type: a11y-audit
 product: Dana
 product_url: https://dana.aitomatic.com
-date: 2026-05-28 19:11 - 20:30 +07:00, Asia/Saigon
-app_version: v0.2.116
+date: Scanned 2026-05-28, every finding re-verified 2026-05-29 on v0.2.119
+app_version: 'v0.2.119 (under active daily development: v0.2.114 -> 116 -> 119 across three days. Findings
+  are a point-in-time snapshot.)'
 workspace: Dana Enterprise -> Dana Team (Admin role)
-method: axe-core 4.10.2 WCAG 2.1 AA + best-practice rules, injected via direct CDP into bb-browser's controlled
-  Chrome. DOM + ARIA inspection via custom CDP driver. 4 surfaces scanned.
+method: axe-core 4.10.2 WCAG 2.1 AA + best-practice rules, injected via direct CDP into the controlled
+  Chrome. DOM + ARIA inspection via custom CDP driver. 5 surfaces (shell counted across all). Every claim
+  re-checked against live DOM on v0.2.119.
 confidence: Medium
 finding_counts:
   critical: 2
-  major: 1
-  moderate: 10
+  major: 0
+  moderate: 9
   minor: 1
-  win: 4
+  win: 6
   changed: 0
 ---
 
@@ -37,7 +39,7 @@ None of these are visual-design failures. They are 4 to 8 lines of code each (co
 
 - **Agent cards are unreachable by keyboard** - rendered as plain `<div>` with no role, no tabindex (Critical, WCAG 2.1.1)
 - **Create-Agent modal has no dialog semantics** - no `role="dialog"`, no `aria-modal`, no `aria-labelledby` (Critical, WCAG 4.1.2)
-- **Color contrast fails systemically** - `text-tertiary` #787878 at 4.41:1, `text-gray-500` #999999 at 2.75:1 (Serious, WCAG 1.4.3)
+- **Color contrast fails systemically** - `text-tertiary` #787878 at 4.41:1, `text-gray-500` #999999 at 2.75:1. Each instance is Moderate, but the breadth (every body-text surface) makes it the third headline issue (WCAG 1.4.3)
 
 ## Scorecard - WCAG 2.1 AA per surface
 
@@ -46,13 +48,13 @@ None of these are visual-design failures. They are 4 to 8 lines of code each (co
 
 | Surface | Violations | Passes | Incomplete | Worst severity |
 | --- | --- | --- | --- | --- |
-| Library page | 3 | 32 | 1 | Critical |
+| Library page | 3 | 32 | 1 | Moderate |
 | Agents list | 4 | 27 | 1 | Critical |
 | Create-Agent modal | 3 | 30 | 1 | Critical |
-| Curate workspace | 4 | 23 | 2 | Serious |
+| Curate workspace | 4 | 23 | 2 | Moderate |
 
 
-*Numbers above are axe violations (rules failed). "Incomplete" means axe could not auto-decide and a human must judge. Critical severity is assigned per WCAG impact + breadth across surfaces, not by axe directly.*
+*Numbers are axe violations (rule groups failed), confirmed on v0.2.119. "Incomplete" means axe could not auto-decide and a human must judge. The two Critical surfaces (Agents, modal) are driven by manual findings axe does not catch: keyboard-unreachable cards and a modal with no dialog role. Library and Curate have no Critical finding - their worst is Moderate (contrast + missing landmarks). Severity uses this report's rubric (Critical / Major / Moderate / Minor), not axe's impact words.*
 
 ### Scenario 1: Shell - sidebar, top bar, theme toggle
 
@@ -61,59 +63,47 @@ None of these are visual-design failures. They are 4 to 8 lines of code each (co
 > **Approach:** Inspected DOM landmarks (header/nav/main/aside/footer presence) plus tabbed through visible focusable elements (21 found) and audited each top-bar icon button for accessible name.
 > **Why:** Shell findings show up on every page. Fixing them once removes them from every surface scan.
 
-### No `<main>`, `<nav>`, or `<header>` landmarks
+### No `<main>` landmark on any surface; landmarks are inconsistent across routes
 
 **Severity:** Moderate  
 **Confidence:** High
 
-The document has zero landmark elements. Screen reader users rely on landmarks to jump (D-shortcut in NVDA, rotor in VoiceOver) between header / nav / main / aside / footer. Without them every page navigation is read top-to-bottom.
+Direct DOM check on v0.2.119: **no `<main>` element exists on any surface** (Library, Agents, Curate all return `main_el=0`). Axe fires `landmark-one-main` on every page. Screen reader users rely on a `main` landmark to skip past the chrome straight to content (D-shortcut in NVDA, rotor in VoiceOver); there is nothing to skip to.
 
-Axe flags this as `landmark-one-main` + `region` (14 unlandmarked content blocks on Library, 7 on Agents, 10 on Curate). WCAG 1.3.1 (Info and Relationships) and best-practice 4.1.2.
+The other landmarks are present but **inconsistent**: Library has a `<header>` and a `<nav>`; Agents has a `<header>` only; the Curate workspace route has **no landmark elements at all**. So the earlier impression of "no landmarks anywhere" is not quite right - the gap is a missing `main` everywhere plus a Curate route with zero landmarks.
 
-```
-// Current
-<div class="flex flex-row">
-  <div class="sidebar">...</div>
-  <div class="main-content">...</div>
-</div>
+Because content sits outside landmarks, axe also fires `region`: 10 unlandmarked blocks on Library, 7 on Agents, 10 on Curate. WCAG 1.3.1 (Info and Relationships) + best-practice.
 
-// Should be
-<div class="flex flex-row">
-  <nav aria-label="Primary">...</nav>
-  <main>...</main>
-</div>
-```
+**Recommendation:** Add a `<main>` wrapper around the content column on every route (including Curate). Make `<nav>` (sidebar) and `<header>` (top bar) consistent across all routes - Curate is missing both. No visual change; large SR benefit.
 
-**Recommendation:** Wrap sidebar in `<nav aria-label="Primary">`. Wrap central content area in `<main>`. Wrap top bar in `<header>`. No visual change, large SR benefit. ~3 line change in the app shell layout component.
-
-### Version label `v0.2.116` fails contrast at 2.75:1
+### Version label `v0.2.119` fails contrast at 2.75:1
 
 **Severity:** Moderate  
 **Confidence:** High
 
-The bottom-left version label uses `text-gray-500` (#999999) on background `#fbfbfb` at 11px. Contrast ratio 2.75:1. WCAG 1.4.3 requires 4.5:1 for normal text.
+The bottom-left sidebar version label uses `text-gray-500` (#999999) on background `#fbfbfb` at 11px. Contrast ratio 2.75:1. WCAG 1.4.3 requires 4.5:1 for normal text. Re-confirmed on v0.2.119.
 
-Not a high-priority surface (version label is rarely the thing a user is looking for), but it is a quick fix in the same Tailwind config change that fixes the more important `text-tertiary` below.
+Not a high-priority surface (version label is rarely the thing a user is looking for), but it is a quick fix in the same Tailwind change that fixes the more important `text-tertiary` below.
 
 **Recommendation:** Change `text-gray-500` to `text-gray-600` (#525252) for the version label specifically, or darken the Tailwind `gray.500` custom color to ~#6b7280 / 4.6:1.
 
-### Workspace labels in sidebar fail contrast at 3.71:1
+### Text inside dropdowns and the workspace switcher fails contrast (only visible when expanded)
 
 **Severity:** Moderate  
-**Confidence:** High
+**Confidence:** Medium
 
-The sidebar shows the active workspace as "Dana Enterprise / Dana Team" in `text-gray-400` (#808080) on light background. 3.71:1. Below the 4.5:1 minimum for body text.
+When the bottom-left Help & Feedback menu is open, the "HELP & FEEDBACK" and "ADMINISTRATION" section headers use `text-gray-500` (#999999) on #f8f8f8 at 8.3pt - 2.68:1. The workspace switcher likewise renders the "Dana Enterprise / Dana Team" labels in a low gray (measured ~3.71:1 on v0.2.116; not reconfirmable on v0.2.119 with the switcher closed).
 
-These labels matter - they tell the user which workspace and team they are acting in. A user with low vision who cannot read them may act in the wrong workspace.
+Marked Medium confidence because these elements are only rendered while their menu is expanded, so they did not appear in the closed-state v0.2.119 scan. The pattern - uppercase micro text in a too-light gray - is consistent with the always-visible failures above.
 
-**Recommendation:** Promote workspace name text from `text-gray-400` to `text-gray-600` (or `text-secondary`). Workspace context is identification, not decoration - it deserves passing contrast.
+**Recommendation:** Either bold the `text-micro` uppercase menu headers (bold needs only 3:1) or darken menu/switcher text to `text-gray-700`.
 
-### Theme toggle and account avatar are properly labeled
+### Top-bar icon buttons carry proper `aria-label`
 
 **Severity:** Win  
 **Confidence:** High
 
-Theme toggle button carries `aria-label="Dark"` (and presumably "Light" in dark mode). Account avatar opens with proper button semantics. Top-bar icon-only buttons consistently carry `aria-label`: "More options", "New conversation", "History", "Refresh tree".
+Every icon-only button in the top bar carries a meaningful `aria-label`: "More options", "New conversation", "History", "Dark" (theme toggle), "Refresh tree". The account avatar opens with proper button semantics.
 
 This is the right pattern. Apply it to the agent cards (see Surface 3) and Dana hits a near-perfect icon-button score.
 
@@ -133,18 +123,18 @@ This is the right pattern. Apply it to the agent cards (see Surface 3) and Dana 
 
 The "Your library is empty / Upload any of these formats" hint uses `text-tertiary` = #787878 on white. 4.41:1 is 0.09 below the 4.5:1 minimum. Same root token causes failures on every agent card in the next surface.
 
-**Recommendation:** Darken the `text-tertiary` design token from #787878 to `#757575` (4.52:1) or `#737373` (4.74:1) - one config change ripples to ~30 failing nodes app-wide.
+**Recommendation:** Darken the `text-tertiary` design token from #787878 to `#757575` (4.52:1) or `#737373` (4.74:1) - one config change ripples to roughly two dozen failing nodes app-wide.
 
-### Section headers in opened menus fail contrast at 2.68:1
+### Supported-formats table uses #999999 text at 2.8-2.84:1
 
 **Severity:** Moderate  
-**Confidence:** Medium
+**Confidence:** High
 
-When the Help & Feedback menu opens (bottom-left in the Library screenshot), the "HELP & FEEDBACK" and "ADMINISTRATION" section headers use `text-gray-500` (#999999) on `#f8f8f8` at 8.3pt - 2.68:1. WCAG 1.4.3 fails by a wide margin.
+The supported-formats table (TYPE / SUPPORTED EXTENSIONS column headers and the file-type rows) uses #999999 on white at 12px: column headers measure 2.8:1, body rows 2.84:1. WCAG 1.4.3 fails.
 
-This affects the Account dropdown header too (no header but the email line is similarly low). The pattern is "uppercase micro text labeled as section header" - applied to a too-light gray.
+Structural credit: the table *does* carry `scope="col"` on its headers, so the table semantics are correct - only the text color fails.
 
-**Recommendation:** Either bold the `text-micro` uppercase headers (bold text needs only 3:1) or darken to `text-gray-700` for menu section headers.
+**Recommendation:** Darken the table text from #999999 to at least `#767676` (4.5:1) or bold it. Keep the existing `scope="col"` markup.
 
 ### Scenario 3: Agents list - cards + + New Agent
 
@@ -207,7 +197,7 @@ The two action buttons in the top-right both have visible text labels and proper
 
 *The dialog that opens from + New Agent. Auditable in isolation because it overlays whatever page the user is on.*
 
-> **Approach:** Opened the modal, walked the entire parent chain of the modal's H2 heading via JS looking for role/aria-modal/aria-label/aria-labelledby on ANY ancestor. Tested Escape close behavior + post-close focus return location.
+> **Approach:** Opened the modal, walked the entire parent chain of the modal's H2 heading via JS looking for role/aria-modal/aria-label/aria-labelledby on ANY ancestor, and inspected every form field for a programmatic label.
 > **Why:** Modals are the highest-risk a11y surface because they require focus trap + dialog announcement + close affordance. Getting any one wrong breaks SR users.
 
 ### Modal has NO `role="dialog"`, NO `aria-modal`, NO accessible name
@@ -219,29 +209,29 @@ Walked the entire parent chain from the modal's `<h2>Build an expert agent with 
 
 Consequence: a screen reader user opening the modal hears nothing. There is no "Build an expert agent with Dana dialog" announcement. The user does not know a dialog opened. They cannot identify the dialog by name. They cannot tell that focus moved into a modal context (vs. just a panel).
 
-WCAG 4.1.2 (Name, Role, Value) Level A failure. Plus WCAG 2.4.3 (Focus Order) risk - without `aria-modal=true`, focus can escape to the background page during Tab cycling, confusing the user about whether the modal is still open.
+WCAG 4.1.2 (Name, Role, Value) Level A failure. Plus WCAG 2.4.3 (Focus Order) risk - without `aria-modal=true`, focus can escape to the background page during Tab cycling.
 
-**Recommendation:** Add three attributes to the modal container: `role="dialog"` + `aria-modal="true"` + `aria-labelledby="<id of the H2>"`. Three lines. Industry-standard `Radix UI Dialog` or `Headless UI Dialog` primitive does this automatically - migrate this one modal to a primitive and the issue is solved structurally.
+**Focus management is a related consequence.** Because the modal uses no dialog primitive, focus-trap (keeping Tab inside the modal) and focus-restoration (returning focus to the `+ New Agent` trigger on close) are almost certainly not implemented - libraries like Radix provide these for free, hand-rolled overlays rarely do. Automated keyboard testing here was inconclusive (synthetic Escape events did not reliably close the modal across runs), so the exact focus behavior needs a manual keyboard pass - but the structural absence of a dialog primitive makes a focus-management gap the likely default.
 
-### Focus does NOT return to `+ New Agent` trigger after Escape closes modal
+**Recommendation:** Add three attributes to the modal container: `role="dialog"` + `aria-modal="true"` + `aria-labelledby="<id of the H2>"`. Better: migrate this one modal to a `Radix UI Dialog` or `Headless UI Dialog` primitive - that delivers the role, the focus trap, AND focus restoration on close in a single change.
 
-**Severity:** Major  
-**Confidence:** Medium
+### Modal form fields are properly labeled
 
-Opened modal, dispatched real Escape via CDP, observed that the modal closed but `document.activeElement` remained on an INPUT (presumably one inside the now-closed modal, or the first focusable on the page).
+**Severity:** Win  
+**Confidence:** High
 
-Best practice: when a modal closes, focus must return to the element that opened it. Otherwise the keyboard user loses context and has to Tab from page-start to find their way back.
+Both inputs in the modal have correct programmatic labels: the name field is `<input id="agent-name">` with `<label for="agent-name">What do you call it?</label>`, and the role field is `<textarea id="agent-description">` with `<label for="agent-description">What's its role and expertise?</label>`. A screen reader announces each field's purpose correctly.
 
-Confidence Medium because CDP key-event timing is occasionally flaky. Worth a human-driven verification.
+So the modal's only structural a11y gap is the missing dialog role - the form inside it is built right.
 
-**Recommendation:** On modal close, restore focus to the trigger element. Standard Radix / Headless UI dialog does this for free. If hand-rolling: save `document.activeElement` when opening, restore via `.focus()` on close.
+**Recommendation:** Keep. Once the dialog role is added, this modal is in good shape.
 
 ### Modal scan inherits all systemic findings (contrast, heading order, region)
 
 **Severity:** Moderate  
 **Confidence:** High
 
-Axe on the modal-open Agents page returns 8 contrast failures (vs 7 clean - the extra failures come from modal copy), 1 heading-order, 13 unlandmarked regions. Same root tokens as the rest of the app.
+Axe on the modal-open Agents page returns 8 contrast failures (vs 7 with the modal closed - the extra come from modal copy), 1 heading-order, 13 unlandmarked regions. Same root tokens as the rest of the app.
 
 **Recommendation:** Fixing the global `text-tertiary` + landmark wrapping fixes the modal too. No modal-specific work for these.
 
@@ -252,32 +242,34 @@ Axe on the modal-open Agents page returns 8 contrast failures (vs 7 clean - the 
 > **Approach:** Navigated to /dana-enterprise/dana-team/agent/<id>, scanned with axe, then probed message input + icon buttons for accessible names via JS.
 > **Why:** This is where users spend the most time. Every interactive control here needs SR + keyboard support or daily work is blocked.
 
-### Message input has `aria-label="Message input"`
+### Message input is correctly labeled
 
 **Severity:** Win  
 **Confidence:** High
 
-The primary text input area carries an explicit `aria-label`. SR announces "Message input, edit text". User immediately knows what the field is for.
+The primary message input is a `contenteditable` element carrying `aria-label="Message input"`. A screen reader announces it correctly. The send (`aria-label="Send message"`) and attach (`aria-label="Add files or library"`) buttons beside it are also labeled.
 
-**Recommendation:** Keep. The string could be even better as `aria-label="Message Dana about Alex"` to give task context, but the current is WCAG-compliant.
+**Recommendation:** Keep. The label could be even better as `aria-label="Message Dana about Alex"` to give task context, but the current is WCAG-compliant.
 
-### Top-bar icons all have `aria-label`
+### All icon-only buttons in the workspace are labeled
 
 **Severity:** Win  
 **Confidence:** High
 
-Inspected the five icon-only buttons in the top bar: More options, New conversation, History, Dark (theme), Refresh tree. Every one has a meaningful `aria-label`. Zero icon-only buttons without names.
+Inspected every icon-only button on the Curate surface: "More options", "New conversation", "History", "Dark" (theme), "Refresh tree", "Add files or library", "Send message", "Toggle Working Panel". All carry a meaningful `aria-label`. Zero unlabeled icon buttons.
 
-**Recommendation:** Keep. Document the pattern in the engineering README and apply it to the attach (+) button and send (^) button at the bottom (need to verify those - this audit did not isolate them).
+**Recommendation:** Keep. This is the icon-button pattern the agent cards (Surface 3) should adopt.
 
-### Suggested-task buttons ('What does solutions Architect involve?') - role unverified
+### Suggested-task chips are real buttons
 
-**Severity:** Moderate  
-**Confidence:** Medium
+**Severity:** Win  
+**Confidence:** High
 
-The 3 suggested task chips below the agent greeting look clickable. They have button-like styling. This audit did not deep-inspect their DOM semantics. If they are `<div>` like the agent cards, the same WCAG 2.1.1 blocker applies.
+The three suggested-task chips below the agent greeting ("What does solutions Architect involve?", "Key challenges in embedded Systems Strategy", "Walk me through your workflow") are genuine `<button>` elements - keyboard reachable and activatable. Verified on v0.2.119: `matches("a,button,[role=button],[tabindex]") === true`.
 
-**Recommendation:** Verify these are `<button>` elements. If not, swap. Same fix pattern as agent cards.
+This is the right pattern, and it makes the agent-card gap (Surface 3) more conspicuous: the chips on this screen are buttons, but the cards that open this screen are not.
+
+**Recommendation:** Keep. Build the agent cards the same way these chips are built.
 
 ### Page has no H1 (axe: `page-has-heading-one`)
 
@@ -301,13 +293,13 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 
 ## Top 7 fixes - Ranked by severity x breadth x effort
 
-1. **Make agent cards keyboard-accessible.** Replace each card's wrapping `<div>` with `<button>` or `<a>`. Critical Single-component change. Unblocks every keyboard user.
-2. **Add dialog semantics to Create-Agent modal.** Three attributes: `role="dialog"` + `aria-modal="true"` + `aria-labelledby="<h2-id>"`. Better: migrate to Radix Dialog primitive. Critical
-3. **Darken `text-tertiary` design token** from #787878 to ~#757575. One Tailwind config line. Fixes ~30 contrast failures across all surfaces in one commit. Major
-4. **Add `<main>` + `<nav>` + `<header>` landmarks** to the app shell. ~5 line layout change. Removes 30+ "region" violations app-wide and gives SR users jump-anchors. Moderate
-5. **Restore focus on modal close.** Save trigger, focus it after close. Built into modal primitives. Major
-6. **Fix heading hierarchy.** Add `<h1>` for page title on every page. Demote or promote agent cards / greetings so hierarchy never skips. Moderate
-7. **Darken `text-gray-500` for version label + section headers in menus.** Promote to `text-gray-700` on these specific elements. Moderate
+1. **Make agent cards keyboard-accessible.** Replace each card's wrapping `<div>` with `<button>` or `<a>`. Critical Single-component change. Unblocks every keyboard user. (The suggested-task chips on the Curate screen are already buttons - copy that pattern.)
+2. **Migrate the Create-Agent modal to a dialog primitive.** A `Radix UI Dialog` / `Headless UI Dialog` delivers `role="dialog"` + `aria-modal` + accessible name + focus-trap + focus-restoration in one change. Or hand-add the three ARIA attributes and wire focus return manually. Critical
+3. **Darken the `text-tertiary` design token** from #787878 to ~#757575. One Tailwind config line. Fixes the dominant always-visible contrast failure (agent card metadata, captions, hints) across every surface in one commit. Moderate (highest-leverage of the Moderates)
+4. **Add a `<main>` landmark to every route** (including Curate, which has none) and make `<nav>` / `<header>` consistent across routes. Clears `landmark-one-main` everywhere and most "region" violations; gives SR users a skip-to-content anchor. Moderate
+5. **Darken the #999999 gray family** - sidebar version label (2.75:1) and the Library supported-formats table (2.8-2.84:1). Promote to `text-gray-600`/`700`. Moderate
+6. **Fix heading hierarchy.** Add an `<h1>` per page (Curate has none), and stop the Agents page skipping H1 -> H3. Moderate
+7. **Darken dropdown + workspace-switcher text** (menu section headers 2.68:1). Bold the uppercase micro labels or move them to `text-gray-700`. Moderate
 
 ## Confidence & caveats - What this audit did and did not cover
 
@@ -322,8 +314,8 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 
 > **Confidence**
 > Headline confidence: **Medium**. Specific findings:
-> - **High confidence**: cross-source observations (axe + DOM inspection + visual screenshot all confirm). Examples: agent cards are `<div>`, modal has no role, contrast ratios are exact axe measurements.
-> - **Medium confidence**: single-method observations. Example: focus-return on modal close test was CDP-only and known to have flaky timing.
+> - **High confidence**: cross-source observations (axe + DOM inspection + visual screenshot all confirm), every one re-verified against live DOM on v0.2.119. Examples: agent cards are `<div>`, modal has no dialog role, modal form fields are labeled, suggested-task chips are buttons, contrast ratios are exact axe measurements.
+> - **Medium confidence**: state-dependent observations not reproducible in the closed-state scan. Example: dropdown / workspace-switcher text contrast (only rendered while the menu is open; the ~3.71:1 switcher figure is from v0.2.116 and was not reconfirmable on v0.2.119). Modal Escape-to-close + focus-return could not be reliably tested via automation and need a manual keyboard pass.
 
 ### Surfaces NOT in this audit
 
@@ -344,11 +336,14 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 
 ## Appendix - Raw axe-core output
 
-Full JSON for each surface scan lives in the plan dir at `plans/260528-1911-dana-accessibility-audit/evidence/`:
+Full JSON for each surface scan lives in the plan dir at `plans/260528-1911-dana-accessibility-audit/evidence/`. Two passes are kept: the original v0.2.116 scan and the v0.2.119 re-verification.
 
-- `axe-library-baseline.json` - 3 violations, 32 passes
-- `axe-agents-clean.json` - 4 violations, 27 passes
-- `axe-create-modal.json` - 3 violations, 30 passes
-- `axe-curate-clean.json` - 4 violations, 23 passes
+**v0.2.119 re-verification (current):**
 
-The Phase 0 baseline file (`phase-00-baseline.md`) documents the toolchain validation: how axe-core was injected, what was tested, and the go decision criteria.
+- `axe-library-v119-clean.json` - 3 violations, 32 passes
+- `axe-agents-v119-clean.json` - 4 violations, 27 passes
+- `axe-curate-v119-clean.json` - 4 violations, 23 passes
+
+**Original v0.2.116 scan:** `axe-library-baseline.json`, `axe-agents-clean.json`, `axe-create-modal.json`, `axe-curate-clean.json`.
+
+The verification verdict (`verification-verdict.md`) records every claim re-checked on v0.2.119 - what held, what was corrected, what changed. The Phase 0 baseline file (`phase-00-baseline.md`) documents the toolchain validation.
