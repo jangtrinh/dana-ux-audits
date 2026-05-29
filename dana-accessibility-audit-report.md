@@ -9,12 +9,13 @@ app_version: 'v0.2.119 (under active daily development: v0.2.114 -> 116 -> 119 a
   are a point-in-time snapshot.)'
 workspace: Dana Enterprise -> Dana Team (Admin role)
 method: axe-core 4.10.2 WCAG 2.1 AA + best-practice rules, injected via direct CDP into the controlled
-  Chrome. DOM + ARIA inspection via custom CDP driver. 5 surfaces (shell counted across all). Every claim
-  re-checked against live DOM on v0.2.119.
+  Chrome, plus targeted DOM/ARIA probes (keyboard operability, dialog role, label associations) and a
+  live message-send test for status-message announcements. 5 surfaces. Every claim re-checked against
+  live DOM on v0.2.119.
 confidence: Medium
 finding_counts:
   critical: 2
-  major: 0
+  major: 1
   moderate: 9
   minor: 1
   win: 6
@@ -29,6 +30,9 @@ Dana ships clean visual polish but assistive-technology support has structural g
 
 None of these are visual-design failures. They are 4 to 8 lines of code each (correct ARIA roles, focused Tailwind color hex change, swap a `<div>` for a `<button>`). The fix surface is small. The current impact - keyboard and screen-reader users locked out of core flows - is large.
 
+> 🚨 **Conformance verdict: Dana does not currently meet WCAG 2.1 Level A**
+> Two findings fail Level A - the most basic tier, the floor beneath AA: **2.1.1 Keyboard** (agent cards are not keyboard-operable) and **4.1.2 Name, Role, Value** (the Create-Agent modal has no dialog role). A product that fails Level A cannot claim AA conformance and would fail a VPAT / Section 508 / EN 301 549 review - the bar enterprise and public-sector buyers gate procurement on. The good news: both Level A failures are small, localized code changes.
+
 #### 3 biggest wins
 
 - `<html lang="en">` set everywhere (WCAG 3.1.1)
@@ -39,7 +43,7 @@ None of these are visual-design failures. They are 4 to 8 lines of code each (co
 
 - **Agent cards are unreachable by keyboard** - rendered as plain `<div>` with no role, no tabindex (Critical, WCAG 2.1.1)
 - **Create-Agent modal has no dialog semantics** - no `role="dialog"`, no `aria-modal`, no `aria-labelledby` (Critical, WCAG 4.1.2)
-- **Color contrast fails systemically** - `text-tertiary` #787878 at 4.41:1, `text-gray-500` #999999 at 2.75:1. Each instance is Moderate, but the breadth (every body-text surface) makes it the third headline issue (WCAG 1.4.3)
+- **Screen readers are never told Dana replied** - the Curate conversation has no live region, so a blind user gets no announcement when an answer arrives (Major, WCAG 4.1.3). For a chat product this is close to unusable. Contrast also fails systemically (`text-tertiary` #787878 at 4.41:1) but is lower-impact.
 
 ## Scorecard - WCAG 2.1 AA per surface
 
@@ -51,10 +55,10 @@ None of these are visual-design failures. They are 4 to 8 lines of code each (co
 | Library page | 3 | 32 | 1 | Moderate |
 | Agents list | 4 | 27 | 1 | Critical |
 | Create-Agent modal | 3 | 30 | 1 | Critical |
-| Curate workspace | 4 | 23 | 2 | Moderate |
+| Curate workspace | 4 | 23 | 2 | Major |
 
 
-*Numbers are axe violations (rule groups failed), confirmed on v0.2.119. "Incomplete" means axe could not auto-decide and a human must judge. The two Critical surfaces (Agents, modal) are driven by manual findings axe does not catch: keyboard-unreachable cards and a modal with no dialog role. Library and Curate have no Critical finding - their worst is Moderate (contrast + missing landmarks). Severity uses this report's rubric (Critical / Major / Moderate / Minor), not axe's impact words.*
+*Numbers are axe violations (rule groups failed), confirmed on v0.2.119. "Incomplete" means axe could not auto-decide and a human must judge. **The worst-severity column is driven by manual findings axe does not catch**: keyboard-unreachable cards (Agents, Critical), a modal with no dialog role (modal, Critical), and no live region for Dana's replies (Curate, Major). Library's worst is Moderate. The axe violation counts therefore understate real severity - automated rules cannot detect a missing live region or a non-keyboard-operable div. Severity uses this report's rubric (Critical / Major / Moderate / Minor), not axe's impact words.*
 
 ### Scenario 1: Shell - sidebar, top bar, theme toggle
 
@@ -242,6 +246,19 @@ Axe on the modal-open Agents page returns 8 contrast failures (vs 7 with the mod
 > **Approach:** Navigated to /dana-enterprise/dana-team/agent/<id>, scanned with axe, then probed message input + icon buttons for accessible names via JS.
 > **Why:** This is where users spend the most time. Every interactive control here needs SR + keyboard support or daily work is blocked.
 
+### Screen readers are not notified when Dana replies (no live region)
+
+**Severity:** Major  
+**Confidence:** High
+
+Tested directly on v0.2.119: sent the message "what is one key task you help with?", Dana returned a full answer, and the conversation surface contained **zero** live regions - no `aria-live`, no `role="log"`, no `role="status"`, no `aria-busy` anywhere in the DOM, before, during, or after the response.
+
+Consequence: a blind user sends a message and hears nothing back. The reply renders silently. They have no signal that an answer arrived, that one is streaming, or that the agent is still working. They would have to blindly navigate the page hunting for new text. Combined with Dana's known long silent execution times, a screen-reader user often cannot tell whether the product is working at all.
+
+This is WCAG 4.1.3 (Status Messages, Level AA). For a conversational AI product - where the entire value is the model's response - failing to announce that response is arguably the single most damaging a11y gap, even though axe does not flag it (axe cannot detect a region that simply does not exist).
+
+**Recommendation:** Wrap the message list in a polite live region: `<div role="log" aria-live="polite" aria-relevant="additions">`. Announce in-progress state with `aria-busy="true"` on the container while streaming, and consider an `aria-live="assertive"` status node for 'Dana is thinking' / 'Response ready'. This single container fixes the core chat-accessibility gap.
+
 ### Message input is correctly labeled
 
 **Severity:** Win  
@@ -291,15 +308,23 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 
 **Recommendation:** Mark as `<h2>`. Keeps heading hierarchy: H1 (agent name in top bar) → H2 (greeting in conversation) → future H3 (each Dana response).
 
-## Top 7 fixes - Ranked by severity x breadth x effort
+## Top fixes - Grouped by effort, ordered by impact
 
-1. **Make agent cards keyboard-accessible.** Replace each card's wrapping `<div>` with `<button>` or `<a>`. Critical Single-component change. Unblocks every keyboard user. (The suggested-task chips on the Curate screen are already buttons - copy that pattern.)
-2. **Migrate the Create-Agent modal to a dialog primitive.** A `Radix UI Dialog` / `Headless UI Dialog` delivers `role="dialog"` + `aria-modal` + accessible name + focus-trap + focus-restoration in one change. Or hand-add the three ARIA attributes and wire focus return manually. Critical
-3. **Darken the `text-tertiary` design token** from #787878 to ~#757575. One Tailwind config line. Fixes the dominant always-visible contrast failure (agent card metadata, captions, hints) across every surface in one commit. Moderate (highest-leverage of the Moderates)
-4. **Add a `<main>` landmark to every route** (including Curate, which has none) and make `<nav>` / `<header>` consistent across routes. Clears `landmark-one-main` everywhere and most "region" violations; gives SR users a skip-to-content anchor. Moderate
-5. **Darken the #999999 gray family** - sidebar version label (2.75:1) and the Library supported-formats table (2.8-2.84:1). Promote to `text-gray-600`/`700`. Moderate
-6. **Fix heading hierarchy.** Add an `<h1>` per page (Curate has none), and stop the Agents page skipping H1 -> H3. Moderate
-7. **Darken dropdown + workspace-switcher text** (menu section headers 2.68:1). Bold the uppercase micro labels or move them to `text-gray-700`. Moderate
+Eight fixes clear every confirmed finding in this report. The first five are small, localized changes shippable in a single sprint (rough total: 2-3 dev-days); the last three are a markup-structure pass. The three highest-impact items - the two Level A blockers and the missing chat live region - are also among the smallest.
+
+### Ship this sprint (small, localized)
+
+1. **Make agent cards keyboard-accessible.** Replace each card's wrapping `<div>` with `<button>` or `<a>`. Critical (Level A). The suggested-task chips on the Curate screen are already buttons - copy that pattern.
+2. **Migrate the Create-Agent modal to a dialog primitive.** A `Radix UI Dialog` / `Headless UI Dialog` delivers `role="dialog"` + `aria-modal` + accessible name + focus-trap + focus-restoration in one change. Critical (Level A)
+3. **Wrap the conversation in a live region.** `<div role="log" aria-live="polite">` around the message list so screen readers announce Dana's replies. Major The core chat-accessibility fix; one container.
+4. **Darken the `text-tertiary` design token** from #787878 to ~#757575. One Tailwind config line; fixes the dominant always-visible contrast failure app-wide. Moderate
+5. **Darken the #999999 gray family** - sidebar version label (2.75:1), Library supported-formats table (2.8-2.84:1), dropdown / switcher text (2.68:1). Promote to `text-gray-600`/`700`. Moderate
+
+### Structural (markup pass)
+
+1. **Add a `<main>` landmark to every route** (including Curate, which has none) and make `<nav>` / `<header>` consistent across routes. Clears `landmark-one-main` everywhere and most "region" violations. Moderate
+2. **Fix heading hierarchy.** Add an `<h1>` per page (Curate has none); stop the Agents page skipping H1 -> H3. Moderate
+3. **Adopt the icon-button + label pattern everywhere.** The top bar already does this right - extend the same discipline to any new control so the win does not regress. Minor
 
 ## Confidence & caveats - What this audit did and did not cover
 
@@ -310,11 +335,11 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 > The auditor wrote earlier UX reports on Dana and went into this scan knowing the app well. Confirmation bias risk: focused on the screens already mapped. Surfaces NOT scanned in this pass: sign-in page (would require log-out), Admin / Settings pages, error states, file-upload modal, OAuth integration popups. A follow-up scan should cover these.
 
 > ⚠️ **Tool limits**
-> Automated tools catch ~30% of WCAG issues. The remaining ~70% require manual SR testing with VoiceOver (macOS), NVDA (Windows), or TalkBack (Android) AND a real keyboard-only walkthrough by a user who relies on assistive tech. None of those happened here. Findings here are the lower-bound real impact is likely worse, not better.
+> Automated tools catch ~30% of WCAG issues. The remaining ~70% require manual SR testing with VoiceOver (macOS), NVDA (Windows), or TalkBack (Android) AND a real keyboard-only walkthrough by a user who relies on assistive tech. This audit added targeted manual DOM/ARIA probes (keyboard operability, dialog role, live regions, label associations) on top of axe, but did not run a real assistive-technology pass. Findings here are the lower bound - real impact is likely worse, not better.
 
 > **Confidence**
 > Headline confidence: **Medium**. Specific findings:
-> - **High confidence**: cross-source observations (axe + DOM inspection + visual screenshot all confirm), every one re-verified against live DOM on v0.2.119. Examples: agent cards are `<div>`, modal has no dialog role, modal form fields are labeled, suggested-task chips are buttons, contrast ratios are exact axe measurements.
+> - **High confidence**: cross-source observations (axe + DOM inspection + visual screenshot all confirm), every one re-verified against live DOM on v0.2.119. Examples: agent cards are `<div>`, modal has no dialog role, modal form fields are labeled, suggested-task chips are buttons, contrast ratios are exact axe measurements. The live-region gap was tested end to end - a real message was sent, Dana replied, and zero live regions existed in the DOM.
 > - **Medium confidence**: state-dependent observations not reproducible in the closed-state scan. Example: dropdown / workspace-switcher text contrast (only rendered while the menu is open; the ~3.71:1 switcher figure is from v0.2.116 and was not reconfirmable on v0.2.119). Modal Escape-to-close + focus-return could not be reliably tested via automation and need a manual keyboard pass.
 
 ### Surfaces NOT in this audit
@@ -327,6 +352,24 @@ The greeting "Hi, I'm Alex" is the visual anchor of the conversation. It is curr
 - Mobile viewport / touch a11y (desktop only)
 - Reduced-motion compliance (animations not tested)
 - Forms with validation errors (form-error announcement to SR)
+
+### Criteria NOT yet tested (do not read "no finding" as "passes")
+
+This pass covers only the criteria that axe plus targeted DOM probes can evaluate: roughly 1.3.1, 1.4.3, 2.1.1, 2.4.6, 4.1.2, and 4.1.3.
+
+The rest of WCAG 2.1 AA was not evaluated and needs a manual pass. The criteria most likely to surface real issues for Dana:
+
+| Criterion | Why it matters for Dana | Status |
+| --- | --- | --- |
+| 2.4.7 Focus Visible | Is there a visible focus ring when tabbing? Stylesheet has focus rules and no `outline:none`, so likely OK - but unconfirmed visually. | Probable pass, unconfirmed |
+| 1.4.11 Non-text Contrast | Icon buttons, input borders, the send button against their backgrounds. | Not tested |
+| 2.1.2 No Keyboard Trap | Once focus enters the modal or working panel, can it get out with the keyboard? | Not tested |
+| 1.4.10 Reflow / 1.4.4 Resize | Does the layout survive 200% zoom / a 320px viewport without horizontal scroll? | Not tested |
+| 1.4.1 Use of Color | Is any state (agent status dot, validation) conveyed by color alone? | Not tested |
+| 2.4.3 Focus Order | Does Tab order match visual order, especially in/around the modal? | Not tested |
+| 3.3.1 / 3.3.3 Error Identification | When the create-agent form rejects input, is the error announced to SR? | Not tested |
+| 1.2.x Time-based Media | Any onboarding video / help carousel captions. | Not tested |
+
 
 ### Open questions
 
