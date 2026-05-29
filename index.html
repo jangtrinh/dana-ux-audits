@@ -22,8 +22,10 @@ h1 { font-size:36px; font-weight:700; margin:0 0 8px; letter-spacing:-.025em; }
 .report-card li { margin:4px 0; }
 .report-card li::marker { color:var(--text-soft); }
 
-
-
+.download-all { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; margin:0 0 40px 0; background:#18181b; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; transition:background .12s; box-shadow:0 1px 2px rgba(0,0,0,.06); }
+.download-all:hover { background:#27272a; }
+.download-all:disabled { opacity:.7; cursor:default; }
+.download-all::before { content:"\2B07\FE0F"; font-size:14px; }
 
 
 
@@ -42,6 +44,8 @@ h1 { font-size:36px; font-weight:700; margin:0 0 8px; letter-spacing:-.025em; }
 <main>
 <h1>Dana UX Audits</h1>
 <p class="subtitle">UX audit reports for dana.aitomatic.com.</p>
+
+<button type="button" class="download-all" onclick="downloadAllMarkdown(this)">Download all markdown</button>
 
 <div class="report-grid">
 <a href="dana-onboarding-v2-ux-audit-report.html" class="report-card">
@@ -101,5 +105,51 @@ h1 { font-size:36px; font-weight:700; margin:0 0 8px; letter-spacing:-.025em; }
 </div>
 
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js" integrity="sha384-+mbV2IY1Zk/X1p/nWllGySJSUN8uMs+gUAN10Or95UBH0fpj6GfKgPmgC5EXieXG" crossorigin="anonymous"></script>
+<script>
+// Paired AI-friendly markdown files - one per report. Keep in sync with the cards above.
+var MD_FILES = [
+  "dana-ux-audits-methodology.md",
+  "dana-onboarding-v2-ux-audit-report.md",
+  "dana-create-agent-flow-deep-dive-ux-audit-report.md",
+  "dana-curate-workspace-deep-dive-ux-audit-report.md",
+  "dana-accessibility-audit-report.md",
+  "dana-plan-benchmark-assessment.md"
+];
+
+// Fetch every markdown report, bundle into one zip client-side, trigger a single download.
+// Static-site friendly: no server needed, works on GitHub Pages.
+async function downloadAllMarkdown(btn) {
+  if (typeof JSZip === "undefined") { btn.textContent = "Library failed to load"; return; }
+  var label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "Bundling " + MD_FILES.length + " reports...";
+  try {
+    var zip = new JSZip();
+    var files = await Promise.all(MD_FILES.map(async function (name) {
+      var res = await fetch(name);
+      if (!res.ok) throw new Error(name + " -> HTTP " + res.status);
+      return { name: name, text: await res.text() };
+    }));
+    files.forEach(function (f) { zip.file(f.name, f.text); });
+    var blob = await zip.generateAsync({ type: "blob" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "dana-ux-audits-markdown.zip";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    btn.textContent = "Downloaded " + MD_FILES.length + " files";
+    setTimeout(function () { btn.textContent = label; btn.disabled = false; }, 2500);
+  } catch (err) {
+    console.error(err);
+    btn.textContent = "Error - retry";
+    btn.disabled = false;
+  }
+}
+</script>
 </body>
 </html>
